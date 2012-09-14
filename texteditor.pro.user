@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by Qt Creator 2.4.1, 2012-06-09T21:36:03. -->
+<!-- Written by Qt Creator 2.4.1, 2012-09-14T18:30:23. -->
 <qtcreator>
  <data>
   <variable>ProjectExplorer.Project.ActiveTarget</variable>
@@ -377,8 +377,10 @@
        <value type="QString">/home/Tomek/Dokumenty/Projekty/texteditor-build-harmattan-Harmattan_Target_-_QEmu_PR1_1__Qt_SDK__Release/exnote_1.0.0_armel.deb</value>
        <value type="QString">/home/Tomek/Dokumenty/Projekty/texteditor-build-harmattan-Harmattan_Target_-_QEmu_PR1_2__Qt_SDK__Release/exnote_1.0.0_armel.deb</value>
        <value type="QString">/home/Tomek/Dokumenty/Projekty/texteditor-build-harmattan-Harmattan_Target_-_QEmu_PR1_2__Qt_SDK__Release/texteditor_1.0.0_armel.deb</value>
+       <value type="QString">/home/Tomek/Dokumenty/Projekty/texteditor-build-harmattan-Harmattan_Target_-_QEmu_PR1_1__Qt_SDK__Release/exnote_1.0.2_armel.deb</value>
       </valuelist>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedHosts">
+       <value type="QString">192.168.1.121</value>
        <value type="QString">192.168.1.121</value>
        <value type="QString">192.168.1.121</value>
        <value type="QString">192.168.1.121</value>
@@ -389,12 +391,14 @@
        <value type="QString"></value>
        <value type="QString"></value>
        <value type="QString"></value>
+       <value type="QString"></value>
       </valuelist>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedTimes">
        <value type="QDateTime">2012-06-09T20:52:55</value>
        <value type="QDateTime">2012-05-29T17:26:04</value>
        <value type="QDateTime">2012-05-22T12:45:00</value>
        <value type="QDateTime">2012-05-21T13:55:58</value>
+       <value type="QDateTime">2012-09-14T18:27:25</value>
       </valuelist>
      </valuemap>
      <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">3</value>

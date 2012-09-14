@@ -10,6 +10,7 @@
 #include <MBanner>
 #include <MList>
 #include <MObjectMenu>
+#include <MLinearLayoutPolicy>
 
 #include "filemodel.h"
 
@@ -42,12 +43,17 @@ private slots:
 
 private:
     void throwMessage(const QString &text);
-
     void removeNoteSlot();
+    void decideNoNotesLabel();
 
     MBanner *infoBanner;
     MButton *installButton;
     MButton *aboutButton;
+
+    MLinearLayoutPolicy *viewportLayoutPolicy;
+
+    MLabel *noNotesLabel;
+    bool isListVisible;
 
     FileModel *model;
 

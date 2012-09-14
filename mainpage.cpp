@@ -1,4 +1,3 @@
-#include <MLinearLayoutPolicy>
 #include <QGraphicsLinearLayout>
 #include <MButton>
 #include <MLayout>
@@ -78,7 +77,7 @@ void MainPage::createContent()
     form->setLayout(viewportLayout);
     viewportWidget->setWidget(form);
     // Create layout policy for the main app viewport
-    MLinearLayoutPolicy *viewportLayoutPolicy = new MLinearLayoutPolicy(viewportLayout, Qt::Vertical);
+    viewportLayoutPolicy = new MLinearLayoutPolicy(viewportLayout, Qt::Vertical);
     viewportLayoutPolicy->setObjectName("ListViewport");
     // Add header to the layout
     portraitPolicy->addItem(header);
@@ -94,7 +93,20 @@ void MainPage::createContent()
     model = new FileModel();
     list->setItemModel(model);
 
-    viewportLayoutPolicy->addItem(list);
+    noNotesLabel = new MLabel("Add your first note");
+    noNotesLabel->setStyleName("CommonEmptyStateTitle");
+    noNotesLabel->setAlignment(Qt::AlignCenter);
+    noNotesLabel->setWordWrap(true);
+    noNotesLabel->setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+
+    if (model->countFiles() > 0) {
+        viewportLayoutPolicy->addItem(list);
+        isListVisible = true;
+    }
+    else {
+        viewportLayoutPolicy->addItem(noNotesLabel);
+        isListVisible = false;
+    }
 
     /////////////////////////////////////////////////// ACTIONS
     MAction *dummyAction = new MAction("", "", this);
@@ -134,6 +146,22 @@ void MainPage::showAboutDialog()
     aboutDialog->appear(MSceneWindow::DestroyWhenDone);
 }
 
+void MainPage::decideNoNotesLabel()
+{
+    bool show = model->countFiles() > 0 ? true : false;
+
+    if (!show && isListVisible) {
+        viewportLayoutPolicy->removeItem(list);
+        viewportLayoutPolicy->addItem(noNotesLabel);
+        isListVisible = false;
+    }
+    else if (show && !isListVisible) {
+        viewportLayoutPolicy->removeItem(noNotesLabel);
+        viewportLayoutPolicy->addItem(list);
+        isListVisible = true;
+    }
+}
+
 void MainPage::reloadModel(int oldRow)
 {
     if (oldRow == -1)
@@ -145,6 +173,7 @@ void MainPage::reloadModel(int oldRow)
         list->itemModel()->insertRows(0, 1, QModelIndex());
     }
 
+    decideNoNotesLabel();
 }
 
 void MainPage::showObjectMenu(const QModelIndex &index)
@@ -164,6 +193,8 @@ void MainPage::removeNoteSlot()
         //list->itemModel()->removeRow(longTappedIndex.row(), longTappedIndex.parent());
         list->itemModel()->removeRows(longTappedIndex.row(), 1, longTappedIndex.parent());
         longTappedIndex = QModelIndex();
+
+        decideNoNotesLabel();
     }
 }
 

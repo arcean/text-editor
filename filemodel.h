@@ -24,9 +24,9 @@ class FileModel : public MAbstractItemModel
 
     QString getFilePath(int index);
     void reload();
+    int countFiles();
 
  private:
-    int countFiles();
     QString getTextFromFile(int position);
     QDateTime getModificationDate(int position);
 
