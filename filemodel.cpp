@@ -76,8 +76,8 @@ QString FileModel::getTextFromFile(int position)
         line += in.readLine();
         //line += "\n";
 
-        if (line.length() > 900) {
-            qDebug() << "break";
+        if (line.length() > 1200) {
+            //qDebug() << "break";
             break;
         }
     }
