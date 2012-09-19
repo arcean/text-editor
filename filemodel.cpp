@@ -74,12 +74,32 @@ QString FileModel::getTextFromFile(int position)
 
     while (!in.atEnd()) {
         line += in.readLine();
-        //line += "\n";
 
         if (line.length() > 1200) {
-            //qDebug() << "break";
             break;
         }
+    }
+
+    //// Parse the title
+    line.replace(QRegExp("<[^>]*/p>"), QString('\n'));
+    line.remove(QRegExp("<[^>]*>"));
+    line.remove("p, li { white-space: pre-wrap; }", Qt::CaseSensitive);
+    // Get only the first line from the title
+    QStringList titleList = line.split(QString('\n'));
+
+    for (int i = 0; i < titleList.length(); i++) {
+        QString newTitle = titleList[i];
+        newTitle.remove(QString('\n'));
+
+        if (!newTitle.isEmpty()) {
+            line = newTitle;
+            break;
+        }
+    }
+
+    // Check if first char is an empty space
+    if (line.at(0) == ' ' || line.at(0) == '\n') {
+        line.remove(0, 1);
     }
 
     return line;
