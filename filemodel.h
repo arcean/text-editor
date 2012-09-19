@@ -15,6 +15,12 @@ class FileModel : public MAbstractItemModel
     Q_OBJECT
 
  public:
+    // Defining roles here which will be used for sorting and filtering in FileSortedModel
+    enum EntryRoles {
+        EntrySortRole = Qt::UserRole + 1,
+        EntryFilterRole
+    };
+
     FileModel(QObject *parent = 0);
     virtual ~FileModel();
 

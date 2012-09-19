@@ -183,6 +183,10 @@ QVariant FileModel::itemData(int row, int group, int role) const
         rowData << entryList[flatRow]->getModificationDate().toString("dd MMMM yyyy");
         return QVariant(rowData);
     }
+    else if (role == EntrySortRole)
+        return QVariant::fromValue(entryList[flatRow]->getFileData());
+    else if (role == EntryFilterRole)
+        return QVariant::fromValue(entryList[flatRow]->getFileData());
 
     return QVariant();
 

@@ -11,6 +11,7 @@
 #include <MList>
 #include <MObjectMenu>
 #include <MLinearLayoutPolicy>
+#include <MSortFilterProxyModel>
 
 #include "filemodel.h"
 
@@ -60,6 +61,7 @@ private:
     MList *list;
     MObjectMenu *objectMenu;
     QModelIndex longTappedIndex;
+    MSortFilterProxyModel *proxyModel;
 
 };
 

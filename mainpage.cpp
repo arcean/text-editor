@@ -91,9 +91,17 @@ void MainPage::createContent()
     MListItemCreator *cellCreator = new MListItemCreator;
     list->setCellCreator(cellCreator);
     model = new FileModel();
-    list->setItemModel(model);
+    // PROXY MODEL
+    proxyModel = new MSortFilterProxyModel();
+    proxyModel->setSortRole(FileModel::EntrySortRole);
+    proxyModel->setFilterRole(FileModel::EntryFilterRole);
+    proxyModel->setDynamicSortFilter(true);
+    proxyModel->setSourceModel(model);
+
+    list->setItemModel(proxyModel);
     //model->setGrouped(true);
     list->setShowGroups(true);
+    list->setIndexDisplayMode(MList::Auto);
 
     noNotesLabel = new MLabel("Add your first note");
     noNotesLabel->setStyleName("CommonEmptyStateTitle");
