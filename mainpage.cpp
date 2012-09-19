@@ -92,6 +92,8 @@ void MainPage::createContent()
     list->setCellCreator(cellCreator);
     model = new FileModel();
     list->setItemModel(model);
+    //model->setGrouped(true);
+    list->setShowGroups(true);
 
     noNotesLabel = new MLabel("Add your first note");
     noNotesLabel->setStyleName("CommonEmptyStateTitle");
@@ -186,7 +188,7 @@ void MainPage::showObjectMenu(const QModelIndex &index)
 void MainPage::removeNoteSlot()
 {
     if(longTappedIndex.isValid()) {
-        QString filePath = model->getFilePath(longTappedIndex.row());
+        QString filePath = model->getFilePath(longTappedIndex.row(), longTappedIndex.parent().row());
         QFile file(filePath);
         file.remove();
 
@@ -214,7 +216,7 @@ void MainPage::showConfirmDeleteDialog()
 
 void MainPage::showEditor(const QModelIndex& index)
 {
-    QString filePath = model->getFilePath(index.row());
+    QString filePath = model->getFilePath(index.row(), index.parent().row());
 
     EditorPage *editor = new EditorPage();
     editor->loadFile(filePath, index.row());

@@ -17,7 +17,8 @@ SOURCES += main.cpp \
     editorpage.cpp \
     mlistitemcreator.cpp \
     aboutdialog.cpp \
-    confirmdeletedialog.cpp
+    confirmdeletedialog.cpp \
+    entry.cpp
 
 HEADERS  += \
     mainpage.h \
@@ -28,7 +29,8 @@ HEADERS  += \
     viewHeader.h \
     mlistitemcreator.h \
     aboutdialog.h \
-    confirmdeletedialog.h
+    confirmdeletedialog.h \
+    entry.h
 
 FORMS    +=
 
