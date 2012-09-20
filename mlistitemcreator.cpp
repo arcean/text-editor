@@ -1,5 +1,4 @@
 #include "mlistitemcreator.h"
-#include <QDebug>
 
 void MListItemCreator::updateCell(const QModelIndex& index, MWidget * cell) const
 {

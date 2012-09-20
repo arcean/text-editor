@@ -14,6 +14,8 @@
 
 EditorPage::EditorPage(QGraphicsItem *parent)
 {
+    Q_UNUSED(parent);
+
     /* Sheet header */
     MBasicSheetHeader *sheetHeader = new MBasicSheetHeader;
 
@@ -69,7 +71,7 @@ void EditorPage::processDialogAccepted()
     this->close();
 }
 
-void EditorPage::loadFile(const QString& filePath, int currentRow)
+void EditorPage::loadFile(const QString& filePath, int currentRow, int parentRow)
 {
     QFile file (filePath);
 
@@ -89,6 +91,7 @@ void EditorPage::loadFile(const QString& filePath, int currentRow)
     editor->setHtml(line);
     this->fileName = filePath;
     this->currentRow = currentRow;
+    this->parentRow = parentRow;
 }
 
 void EditorPage::writeToFile()
@@ -109,9 +112,9 @@ void EditorPage::writeToFile()
     file.close();
 
     if (fileName.length() <= 0)
-        emit reloadModel(-1);
+        emit reloadModel(-1, -1);
     else
-        emit reloadModel(currentRow);
+        emit reloadModel(currentRow, parentRow);
 }
 
 QString EditorPage::getNewFilename()

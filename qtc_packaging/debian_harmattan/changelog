@@ -1,3 +1,10 @@
+exnote (1.1.0) unstable; urgency=low
+  * New: Sorting by name with index model.
+  * New: Possibility to choose sorting mode.
+  * New: No notes label.
+
+ -- Tomasz Pieniążek <t.pieniazek@gazeta.pl>  Thu, 20 Sep 2012 21:19:35 +0200
+
 exnote (1.0.2) unstable; urgency=low
   * Bug fixes
 

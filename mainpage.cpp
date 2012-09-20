@@ -29,6 +29,7 @@
 #include "mlistitemcreator.h"
 #include "aboutdialog.h"
 #include "confirmdeletedialog.h"
+#include "sortdialog.h"
 
 MainPage::MainPage(QGraphicsItem *parent)
     : MApplicationPage(parent)
@@ -46,6 +47,7 @@ MainPage::~MainPage()
 void MainPage::createContent()
 {
     MTheme *theme = MTheme::instance();
+    theme->addPixmapDirectory("/opt/exnote/data/");
     theme->loadCSS("/opt/exnote/style/exnote.css");
     applicationWindow()->setStyleName("CommonApplicationWindow");
     setStyleName("CommonApplicationPage");
@@ -83,6 +85,10 @@ void MainPage::createContent()
     // Add viewportWidget to layout (main layout)
     portraitPolicy->addItem(viewportWidget);
 
+    /////////////////////////////////////////////////// SETTINGS SINGLETON
+    // Needed by list and model.
+    settings = &Singleton<Settings>::Instance();
+
     /////////////////////////////////////////////////// CONTENT
 
     list = new MList(this);
@@ -98,8 +104,11 @@ void MainPage::createContent()
     proxyModel->setSourceModel(model);
 
     list->setItemModel(proxyModel);
-    //model->setGrouped(true);
-    list->setShowGroups(true);
+    // Load sorting settings
+    if (settings->getSortMode() == 1) {
+        model->setGrouped(true);
+        list->setShowGroups(true);
+    }
     list->setIndexDisplayMode(MList::Auto);
 
     noNotesLabel = new MLabel("Add your first note");
@@ -143,10 +152,33 @@ void MainPage::createContent()
     connect(list, SIGNAL(itemClicked(QModelIndex)), this, SLOT(showEditor(QModelIndex)));
     connect(removeNote, SIGNAL(triggered()), this, SLOT(showConfirmDeleteDialog()));
     connect(aboutDialog, SIGNAL(triggered()), this, SLOT(showAboutDialog()));
+    connect(header, SIGNAL(clicked()), this, SLOT(showSortDialog()));
 
     /////////////////////////////////////////////////// OTHER
     // Create info banner.
-    infoBanner = new MBanner();
+    //infoBanner = new MBanner();
+}
+
+void MainPage::showSortDialog()
+{
+    SortDialog *sortDialog = new SortDialog();
+
+    connect(sortDialog, SIGNAL(sortTypeChanged(int)), this, SLOT(parseSortDialogOutput(int)));
+    sortDialog->appear(MSceneWindow::DestroyWhenDone);
+}
+
+void MainPage::parseSortDialogOutput(int sortType)
+{
+    if (sortType == 0) {
+        list->setShowGroups(false);
+        model->setGrouped(false);
+        settings->setSortMode(0);
+    }
+    else if (sortType == 1) {
+        list->setShowGroups(true);
+        model->setGrouped(true);
+        settings->setSortMode(1);
+    }
 }
 
 void MainPage::showAboutDialog()
@@ -171,13 +203,15 @@ void MainPage::decideNoNotesLabel()
     }
 }
 
-void MainPage::reloadModel(int oldRow)
+void MainPage::reloadModel(int oldRow, int oldParentRow)
 {
-    if (oldRow == -1)
+    int flatRow = model->getCurrentRow(oldRow, oldParentRow);
+
+    if (flatRow == -1)
         list->itemModel()->insertRows(0, 1, QModelIndex());
     else {
         // Firstly, remove current row
-        list->itemModel()->removeRows(oldRow, 1, QModelIndex());
+        list->itemModel()->removeRows(flatRow, 1, QModelIndex());
         // Then insert a new one at 0
         list->itemModel()->insertRows(0, 1, QModelIndex());
     }
@@ -229,16 +263,16 @@ void MainPage::showEditor(const QModelIndex& index)
     QString filePath = model->getFilePath(index.row(), index.parent().row());
 
     EditorPage *editor = new EditorPage();
-    editor->loadFile(filePath, index.row());
+    editor->loadFile(filePath, index.row(), index.parent().row());
 
-    connect(editor, SIGNAL(reloadModel(int)), this, SLOT(reloadModel(int)));
+    connect(editor, SIGNAL(reloadModel(int, int)), this, SLOT(reloadModel(int, int)));
     editor->appear(MSceneWindow::DestroyWhenDismissed);
 }
 
 void MainPage::showNewEditor()
 {
     EditorPage *editor = new EditorPage();
-    connect(editor, SIGNAL(reloadModel(int)), this, SLOT(reloadModel(int)));
+    connect(editor, SIGNAL(reloadModel(int, int)), this, SLOT(reloadModel(int, int)));
     editor->appear(MSceneWindow::DestroyWhenDismissed);
     editor->setFocusOnEditor();
 }

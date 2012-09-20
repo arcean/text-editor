@@ -35,7 +35,8 @@ class FileModel : public MAbstractItemModel
     void updateData(const QModelIndex &first, const QModelIndex &last);
 
     QString getFilePath(int index, int parentIndex);
-    //void reload();
+    int getCurrentRow(int row, int parentRow);
+
     int countFiles();
     void clear();
 

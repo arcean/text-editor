@@ -19,7 +19,7 @@ public:
         setContentsMargins(0, 0, 0, 0);
         linearLayout = new QGraphicsLinearLayout(Qt::Horizontal, this);
         linearLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-        // Set left margin to 8, needed by selectorImage
+        // Set left margin to 8, margin needed by selectorImage
         linearLayout->setContentsMargins(0, 0, 8, 0);
         linearLayout->setSpacing(0);
         titleWidget = new MLabel();

@@ -212,3 +212,24 @@ MTextEditStyle:selected {
     margin-top:     0;
     margin-bottom:  0;
 }
+
+#MDialogTitleBar {
+    background-image: exnote-dialog-header 12px 12px 12px 12px;
+    margin-right: 0;
+    margin-left: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+
+    minimum-size: -1 57px;
+    preferred-size: -1 57px;
+    maximum-size: -1 57px;
+}
+
+#CommonBasicListItem:pressed {
+    background-image:  color19-meegotouch-panel-background-selected $CORNER_MARGINS;
+    background-opacity: 0.2;
+}
+#CommonBasicListItem:selected {
+    background-image:  color19-meegotouch-panel-background-selected $CORNER_MARGINS;
+    background-opacity: 0.2;
+}

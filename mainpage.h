@@ -16,6 +16,9 @@
 #include "filemodel.h"
 #include "ClickableViewHeader.h"
 
+#include "singleton.h"
+#include "settings.h"
+
 /* To enable debug msgs: */
 /* -output-level debug */
 
@@ -32,11 +35,14 @@ public slots:
 
 private slots:
     void showAboutDialog();
+    void showSortDialog();
+
+    void parseSortDialogOutput(int sortType);
 
     void showNewEditor();
     void showEditor(const QModelIndex& index);
 
-    void reloadModel(int oldRow);
+    void reloadModel(int oldRow, int oldParentRow);
 
     void showObjectMenu(const QModelIndex &index);
 
@@ -47,6 +53,8 @@ private:
     void throwMessage(const QString &text);
     void removeNoteSlot();
     void decideNoNotesLabel();
+
+    Settings *settings;
 
     MBanner *infoBanner;
     MButton *installButton;
@@ -63,7 +71,6 @@ private:
     MObjectMenu *objectMenu;
     QModelIndex longTappedIndex;
     MSortFilterProxyModel *proxyModel;
-    ClickableViewHeader *viewHeader;
 
 };
 

@@ -12,11 +12,11 @@ class EditorPage : public MSheet
 public:
     explicit EditorPage(QGraphicsItem *parent = 0);
 
-    void loadFile(const QString& filePath, int currentRow);
+    void loadFile(const QString& filePath, int currentRow, int parentRow);
     void setFocusOnEditor();
 
 signals:
-    void reloadModel(int oldRow);
+    void reloadModel(int oldRow, int oldParentRow);
     
 public slots:
 
@@ -34,6 +34,7 @@ private:
     // Current filename
     QString fileName;
     int currentRow;
+    int parentRow;
     
 };
 

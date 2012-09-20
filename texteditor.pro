@@ -18,7 +18,10 @@ SOURCES += main.cpp \
     mlistitemcreator.cpp \
     aboutdialog.cpp \
     confirmdeletedialog.cpp \
-    entry.cpp
+    entry.cpp \
+    sortdialog.cpp \
+    sortdialogmodel.cpp \
+    settings.cpp
 
 HEADERS  += \
     mainpage.h \
@@ -31,7 +34,11 @@ HEADERS  += \
     aboutdialog.h \
     confirmdeletedialog.h \
     entry.h \
-    ClickableViewHeader.h
+    ClickableViewHeader.h \
+    sortdialog.h \
+    sortdialogmodel.h \
+    settings.h \
+    singleton.h
 
 FORMS    +=
 
@@ -59,7 +66,7 @@ contains(MEEGO_EDITION,harmattan) {
     css.files = data/exnote.css
 
     gfx.path = /opt/exnote/data/
-    gfx.files = data/dialog-question.png
+    gfx.files = data/dialog-question.png data/exnote-dialog-header.png
 
     INSTALLS += icon desktop css gfx
 

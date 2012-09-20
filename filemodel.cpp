@@ -9,12 +9,6 @@ FileModel::FileModel(QObject *parent)
      buckets()
 {
     numFiles = countFiles();
-    setGrouped(true);
-
-   /* for (int i = 0; i < numFiles; i++) {
-        filesData.append(getTextFromFile(i));
-        lastModification.append(getModificationDate(i));
-    }*/
     insertRows(0, numFiles, QModelIndex());
 }
 
@@ -22,20 +16,6 @@ FileModel::~FileModel()
 {
     qDeleteAll(entryList);
 }
-/*
-void FileModel::reload()
-{
-    numFiles = countFiles();
-    qDebug() << "numFiles" << numFiles;
-    filesData.clear();
-
-    for (int i = 0; i < numFiles; i++) {
-        filesData.append(getTextFromFile(i));
-    }
-
-    for (int i = 0; i < numFiles; i++)
-        emit dataChanged(createIndex(i, 0), createIndex(i, 0));
-}*/
 
 int FileModel::countFiles()
 {
@@ -71,7 +51,7 @@ QString FileModel::getFileName(int position)
         qDebug() << "[E]: No such file:" << position;
         return "";
     }
-    qDebug() << "FilesName:" << fileList.at(position).filePath();
+
     return fileList.at(position).filePath();
 }
 
@@ -87,7 +67,6 @@ QString FileModel::getTextFromFile(int position)
     }
 
     QFile file (fileList.at(position).filePath());
-    qDebug() << "FN:" << fileList.at(position).filePath();
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return "";
@@ -173,11 +152,11 @@ QVariant FileModel::itemData(int row, int group, int role) const
         flatRow = buckets.origItemIndex(group, row);
 
     Q_ASSERT(flatRow >= 0);
-    Q_ASSERT(flatRow < filesData.size());
+    Q_ASSERT(flatRow < entryList.size());
 
     if (role == Qt::DisplayRole) {
         QStringList rowData;
-        qDebug() << "index:" << row << " flatrow" << flatRow;
+
         rowData << entryList[flatRow]->getFileData();
         // Convert QDateTime to QString e.g. 17 may 2012
         rowData << entryList[flatRow]->getModificationDate().toString("dd MMMM yyyy");
@@ -270,19 +249,16 @@ bool FileModel::removeRows(int row, int count, const QModelIndex &parent)
         flatRow = buckets.origItemIndex(group, row);
 
     Q_ASSERT(row >= 0);
-    Q_ASSERT(row < filesData.size());
-    Q_ASSERT(row < lastModification.size());
+    Q_ASSERT(row < entryList.size());
 
     beginRemoveRows(parent, row, row + count - 1, count == 1);
     qDeleteAll(entryList.begin() + flatRow, entryList.begin() + flatRow + count - 1);
     entryList.remove(flatRow, count);
 
-    if (isGrouped() && group >= 0) {
+    if (isGrouped() && group >= 0)
         buckets.removeBucketItems(group, row, count);
-        buckets.removeEmptyBucket(group);
-    }
-    else
-        regenerateModel();
+    //else
+    regenerateModel();
 
     endRemoveRows();
 
@@ -327,7 +303,14 @@ QString FileModel::getFilePath(int index, int parentIndex)
         qDebug() << "[E]: index >> filesName";
         return "";
     }
-    qDebug() << "index" << index << "FN" << entryList[index]->getFileName();
 
     return entryList[index]->getFileName();
+}
+
+int FileModel::getCurrentRow(int row, int parentRow)
+{
+    if (isGrouped() && parentRow >= 0)
+        row = buckets.origItemIndex(parentRow, row);
+
+    return row;
 }
