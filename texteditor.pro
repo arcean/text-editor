@@ -30,7 +30,8 @@ HEADERS  += \
     mlistitemcreator.h \
     aboutdialog.h \
     confirmdeletedialog.h \
-    entry.h
+    entry.h \
+    ClickableViewHeader.h
 
 FORMS    +=
 

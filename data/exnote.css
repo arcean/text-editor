@@ -1,5 +1,6 @@
 @const COLOR_NOTE_DATE_BACKGROUND: #E6E6E6;
 @const COLOR_NOTE_DATE: #808080;
+@const ICON32: 3.2mm 3.2mm;
 
 @const COLOR_ACCENT1: $COLOR_ACCENT19;
 
@@ -198,4 +199,16 @@ MTextEditStyle:selected {
 
 #ListViewport.Landscape {
     margin-bottom: $HEIGHT_NAVIGATIONBAR_LANDSCAPE;
+}
+
+#SelectorImage {
+    background-image: "icon-m-textinput-combobox-arrow";
+    background-opacity: 1.0;
+    maximum-size:   $ICON32;
+    minimum-size:   $ICON32;
+    preferred-size: $ICON32;
+    margin-left:    0;
+    margin-right:   $INDENT_DEFAULT;
+    margin-top:     0;
+    margin-bottom:  0;
 }

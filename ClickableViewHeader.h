@@ -1,11 +1,16 @@
-#ifndef HEADER_H
-#define HEADER_H
+#ifndef CLICKABLEVIEWHEADER_H
+#define CLICKABLEVIEWHEADER_H
 
-class ViewHeader : public MWidgetController
+#include <MImageWidget>
+#include <QGraphicsLinearLayout>
+#include <MLabel>
+#include <MButton>
+
+class ClickableViewHeader : public MButton
 {
 public:
-    ViewHeader(QGraphicsItem *parent = 0) :
-        MWidgetController(parent),
+    ClickableViewHeader(QGraphicsItem *parent = 0) :
+        MButton(parent),
         linearLayout(0),
         titleWidget(0)
     {
@@ -14,12 +19,18 @@ public:
         setContentsMargins(0, 0, 0, 0);
         linearLayout = new QGraphicsLinearLayout(Qt::Horizontal, this);
         linearLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-        linearLayout->setContentsMargins(0, 0, 0, 0);
+        // Set left margin to 8, needed by selectorImage
+        linearLayout->setContentsMargins(0, 0, 8, 0);
         linearLayout->setSpacing(0);
         titleWidget = new MLabel();
         titleWidget->setTextElide(true);
         titleWidget->setStyleName("CommonHeaderInverted");
+        selectorImage = new MImageWidget();
+        selectorImage->setStyleName("SelectorImage");
+
         linearLayout->addItem(titleWidget);
+        linearLayout->addItem(selectorImage);
+        linearLayout->setAlignment(selectorImage, Qt::AlignVCenter);
     }
 
     void setTitle(const QString &title)
@@ -30,7 +41,8 @@ public:
 private:
     QGraphicsLinearLayout *linearLayout;
     MLabel *titleWidget;
+    MImageWidget *selectorImage;
 
 };
 
-#endif // HEADER_H
+#endif // CLICKABLEVIEWHEADER_H

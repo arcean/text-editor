@@ -25,7 +25,6 @@
 #include <MSceneManager>
 
 #include "mainpage.h"
-#include "viewHeader.h"
 #include "editorpage.h"
 #include "mlistitemcreator.h"
 #include "aboutdialog.h"
@@ -60,7 +59,7 @@ void MainPage::createContent()
     viewport->setAutoRange(false);
     viewport->setRange(QRectF(0,0,0,0));
 
-    ViewHeader *header = new ViewHeader;
+    ClickableViewHeader *header = new ClickableViewHeader;
     header->setTitle("exNote");
 
     MLinearLayoutPolicy *portraitPolicy = new MLinearLayoutPolicy(layout, Qt::Vertical);

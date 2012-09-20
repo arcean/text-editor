@@ -14,6 +14,7 @@
 #include <MSortFilterProxyModel>
 
 #include "filemodel.h"
+#include "ClickableViewHeader.h"
 
 /* To enable debug msgs: */
 /* -output-level debug */
@@ -62,6 +63,7 @@ private:
     MObjectMenu *objectMenu;
     QModelIndex longTappedIndex;
     MSortFilterProxyModel *proxyModel;
+    ClickableViewHeader *viewHeader;
 
 };
 
