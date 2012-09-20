@@ -198,10 +198,13 @@ void MainPage::removeNoteSlot()
     if(longTappedIndex.isValid()) {
         QString filePath = model->getFilePath(longTappedIndex.row(), longTappedIndex.parent().row());
         QFile file(filePath);
-        file.remove();
 
-        //list->itemModel()->removeRow(longTappedIndex.row(), longTappedIndex.parent());
+        file.remove();
         list->itemModel()->removeRows(longTappedIndex.row(), 1, longTappedIndex.parent());
+
+        //FIXME: workaround for a bug with disappearing items in the list (groups thing):
+        proxyModel->setSourceModel(model);
+
         longTappedIndex = QModelIndex();
 
         decideNoNotesLabel();

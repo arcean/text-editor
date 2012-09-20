@@ -277,8 +277,10 @@ bool FileModel::removeRows(int row, int count, const QModelIndex &parent)
     qDeleteAll(entryList.begin() + flatRow, entryList.begin() + flatRow + count - 1);
     entryList.remove(flatRow, count);
 
-    if (isGrouped() && group >= 0)
+    if (isGrouped() && group >= 0) {
         buckets.removeBucketItems(group, row, count);
+        buckets.removeEmptyBucket(group);
+    }
     else
         regenerateModel();
 
