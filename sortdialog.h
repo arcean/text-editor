@@ -8,7 +8,7 @@ class SortDialog : public MDialog
 {
     Q_OBJECT
 public:
-    explicit SortDialog(QGraphicsWidget *parent = 0);
+    explicit SortDialog(int sortMode, QGraphicsWidget *parent = 0);
 
 private slots:
     void itemClicked(const QModelIndex &index);

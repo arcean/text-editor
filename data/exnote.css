@@ -244,5 +244,39 @@ margin-right:      0;
 }
 #CommonBasicListItemAccented:selected {
     background-image:  color19-meegotouch-panel-background-selected $CORNER_MARGINS;
+    background-opacity: 0.4;
+}
+
+#PopupListItem:pressed {
+    background-image : color19-meegotouch-panel-background-selected $CORNER_MARGINS;
+    background-tiles: none;
+    background-color: $COLOR_ACCENT19;
     background-opacity: 0.2;
 }
+
+#PopupListItem:selected {
+    background-image : color19-meegotouch-panel-background-selected $CORNER_MARGINS;
+    background-tiles: none;
+    background-color: $COLOR_ACCENT19;
+    background-opacity: 0.4;
+}
+
+#CommonComboBoxIcon {
+background-image: "meegotouch-combobox-indicator-inverted";
+background-opacity: 1.0;
+maximum-size:   $ICON32;
+minimum-size:   $ICON32;
+preferred-size: $ICON32;
+margin-left:    0;
+margin-right:   $INDENT_DEFAULT;
+margin-top:     0;
+margin-bottom:  0;
+}
+#CommonComboBoxIcon:pressed {
+background-image: "meegotouch-combobox-indicator-inverted-pressed";
+background-opacity: 0.5;
+}
+#CommonComboBoxIcon:disabled {
+background-image: "meegotouch-combobox-indicator-inverted-disabled";
+}
+

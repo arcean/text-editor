@@ -27,7 +27,7 @@ public:
     }
 };
 
-SortDialog::SortDialog(QGraphicsWidget *parent)
+SortDialog::SortDialog(int sortMode, QGraphicsWidget *parent)
 {
     Q_UNUSED(parent);
 
@@ -51,11 +51,17 @@ SortDialog::SortDialog(QGraphicsWidget *parent)
     SortDialogModel *model = new SortDialogModel;
     list->setItemModel(model);
 
+    // Select item
+    QItemSelectionModel *selectionModel = new QItemSelectionModel(model);
+    list->setSelectionModel(selectionModel);
+    QModelIndex index = model->index(sortMode);
+    selectionModel->select(index, QItemSelectionModel::Select);
+
     landscapePolicy->addItem(list);
     portraitPolicy->addItem(list);
 
     this->setCentralWidget(centralWidget);
-
+selectionModel->select(index, QItemSelectionModel::Select);
     connect(list, SIGNAL(itemClicked(QModelIndex)), this, SLOT(itemClicked(QModelIndex)));
 }
 

@@ -161,7 +161,7 @@ void MainPage::createContent()
 
 void MainPage::showSortDialog()
 {
-    SortDialog *sortDialog = new SortDialog();
+    SortDialog *sortDialog = new SortDialog(settings->getSortMode());
 
     connect(sortDialog, SIGNAL(sortTypeChanged(int)), this, SLOT(parseSortDialogOutput(int)));
     sortDialog->appear(MSceneWindow::DestroyWhenDone);
