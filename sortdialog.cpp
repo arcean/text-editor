@@ -19,7 +19,7 @@ public:
     void updateCell(const QModelIndex& index, MWidget *cell) const
     {
         MBasicListItem * contentItem = qobject_cast<MBasicListItem *>(cell);
-        contentItem->setStyleName("CommonBasicListItem");
+        contentItem->setStyleName("CommonBasicListItemAccented");
         contentItem->setItemStyle(MBasicListItem::SingleTitle);
         QVariant data = index.data(Qt::DisplayRole);
         QStringList rowData = data.value<QStringList>();
