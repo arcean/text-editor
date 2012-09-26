@@ -261,22 +261,9 @@ margin-right:      0;
     background-opacity: 0.4;
 }
 
-#CommonComboBoxIcon {
-background-image: "meegotouch-combobox-indicator-inverted";
-background-opacity: 1.0;
-maximum-size:   $ICON32;
-minimum-size:   $ICON32;
-preferred-size: $ICON32;
-margin-left:    0;
-margin-right:   $INDENT_DEFAULT;
-margin-top:     0;
-margin-bottom:  0;
-}
-#CommonComboBoxIcon:pressed {
-background-image: "meegotouch-combobox-indicator-inverted-pressed";
-background-opacity: 0.5;
-}
-#CommonComboBoxIcon:disabled {
-background-image: "meegotouch-combobox-indicator-inverted-disabled";
+// Harmattan PR 1.3 bug - invisible indicator object / icon:
+MComboBoxStyle {
+    indicator-object-name:          "CommonComboBoxIconInverted";
+    sub-title-object-name:          "CommonSubTitleInverted";
 }
 
