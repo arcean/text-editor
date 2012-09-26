@@ -261,9 +261,13 @@ margin-right:      0;
     background-opacity: 0.4;
 }
 
-// Harmattan PR 1.3 bug - invisible indicator object / icon:
+// Harmattan PR 1.3 bug - invisible indicator object / icon, wrong subtitle style:
+
 MComboBoxStyle {
-    indicator-object-name:          "CommonComboBoxIconInverted";
+    title-object-name:              "CommonTitleInverted";
     sub-title-object-name:          "CommonSubTitleInverted";
+    icon-object-name:               "CommonMainIconInverted";
+    progress-indicator-object-name: "CommonProgressBarInverted";
+    indicator-object-name:          "CommonComboBoxIconInverted";
 }
 
