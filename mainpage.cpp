@@ -266,15 +266,18 @@ void MainPage::showEditor(const QModelIndex& index)
     editor->loadFile(filePath, index.row(), index.parent().row());
 
     connect(editor, SIGNAL(reloadModel(int, int)), this, SLOT(reloadModel(int, int)));
+
     editor->appear(MSceneWindow::DestroyWhenDismissed);
 }
 
 void MainPage::showNewEditor()
 {
-    EditorPage *editor = new EditorPage();
+    // Focus on the text entry
+    EditorPage *editor = new EditorPage(true);
+
     connect(editor, SIGNAL(reloadModel(int, int)), this, SLOT(reloadModel(int, int)));
+
     editor->appear(MSceneWindow::DestroyWhenDismissed);
-    editor->setFocusOnEditor();
 }
 
 void MainPage::throwMessage(const QString &text)

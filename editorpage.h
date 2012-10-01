@@ -10,10 +10,9 @@ class EditorPage : public MSheet
 {
     Q_OBJECT
 public:
-    explicit EditorPage(QGraphicsItem *parent = 0);
+    explicit EditorPage(bool focusOnEditor = false, QGraphicsItem *parent = 0);
 
     void loadFile(const QString& filePath, int currentRow, int parentRow);
-    void setFocusOnEditor();
 
 signals:
     void reloadModel(int oldRow, int oldParentRow);
@@ -24,6 +23,7 @@ private slots:
     void processDialogRejected();
     void processDialogAccepted();
     void enableSaveButton();
+    void setFocusOnEditor();
 
 private:
     QString getNewFilename();

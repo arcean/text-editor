@@ -12,7 +12,7 @@
 #include "editorpage.h"
 #include "viewHeader.h"
 
-EditorPage::EditorPage(QGraphicsItem *parent)
+EditorPage::EditorPage(bool focusOnEditor, QGraphicsItem *parent)
 {
     Q_UNUSED(parent);
 
@@ -39,6 +39,9 @@ EditorPage::EditorPage(QGraphicsItem *parent)
     connect(sheetHeader->negativeAction(), SIGNAL(triggered()), SLOT(processDialogRejected()));
     connect(sheetHeader->positiveAction(), SIGNAL(triggered()), SLOT(processDialogAccepted()));
     connect(editor, SIGNAL(textChanged()), this, SLOT(enableSaveButton()));
+
+    if (focusOnEditor)
+        connect(this, SIGNAL(appeared()), this, SLOT(setFocusOnEditor()));
 
     /////////////////////////////////////////////////// OTHER
     // Disable "Save" button
@@ -148,6 +151,5 @@ QString EditorPage::getNewFilename()
             ready = true;
     }
 
-    qDebug() << "New filename" << file.fileName();
     return file.fileName();
 }
