@@ -268,8 +268,8 @@ void MainPage::showShareDialog()
     if(longTappedIndex.isValid()) {
         QString filePath = model->getFilePath(longTappedIndex.row(), longTappedIndex.parent().row());
 
-        ShareCommand ShareCommand;
-        ShareCommand.share(filePath);
+        ShareCommand shareCommand;
+        shareCommand.share(filePath);
 
         longTappedIndex = QModelIndex();
     }
