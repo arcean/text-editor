@@ -46,6 +46,9 @@ EditorPage::EditorPage(bool focusOnEditor, QGraphicsItem *parent)
     /////////////////////////////////////////////////// OTHER
     // Disable "Save" button
     saveAction->setDisabled(true);
+
+    // Initialize Utils
+    utils = &Singleton<Utils>::Instance();
 }
 
 void EditorPage::setFocusOnEditor()
@@ -101,8 +104,16 @@ void EditorPage::writeToFile()
 {
     QString name;
 
-    if (fileName.length() <= 0)
-        name = "/home/user/MyDocs/exnote/" + getNewFilename();
+    if (fileName.length() <= 0) {
+        QString text = editor->text();
+
+        if (text.length() > 32)
+            text.chop(text.length() - 32);
+
+        QString generatedFilename = utils->getNewFilename(text);
+
+        name = "/home/user/MyDocs/exnote/" + generatedFilename;
+    }
     else
         name = fileName;
 
@@ -118,38 +129,4 @@ void EditorPage::writeToFile()
         emit reloadModel(-1, -1);
     else
         emit reloadModel(currentRow, parentRow);
-}
-
-QString EditorPage::getNewFilename()
-{
-    QDir appDir("/home/user/MyDocs/exnote/");
-    bool ready = false;
-    int counter = 0;
-    QDateTime time = QDateTime::currentDateTime();
-    QString baseName = time.toString("dd_mm_yy");
-
-    if(!appDir.exists()) {
-        appDir.mkdir("/home/user/MyDocs/exnote/");
-    }
-
-    QDir::setCurrent("/home/user/MyDocs/exnote/");
-    QFile file;
-
-    while (!ready) {
-        if(counter > 0)
-            file.setFileName(baseName + "(" + QString::number(counter) +").html");
-        else
-            file.setFileName(baseName + ".html");
-
-        if(!file.exists()) {
-            return file.fileName();
-        }
-
-        counter++;
-
-        if(counter > 500000)
-            ready = true;
-    }
-
-    return file.fileName();
 }

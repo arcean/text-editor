@@ -1,14 +1,26 @@
+exnote (1.2.0) unstable; urgency=low
+
+  * Added: sharing funcionality.
+  * Changed: file naming scheme.
+  * Changed: moved some parts of the code to Utils class.
+  * Fixed: there's a space before the title.
+
+ -- Tomasz Pieniążek <t.pieniazek@gazeta.pl>  Mon, 30 Jan 2013 18:43:00 +0200
+
 exnote (1.1.2) unstable; urgency=low
+
   * Define app version in the .pro file
 
  -- Tomasz Pieniążek <t.pieniazek@gazeta.pl>  Mon, 30 Jan 2013 13:15:00 +0200
 
 exnote (1.1.1) unstable; urgency=low
+
   * Bug fixes
 
  -- Tomasz Pieniążek <t.pieniazek@gazeta.pl>  Mon, 01 Oct 2012 19:28:47 +0200
 
 exnote (1.1.0) unstable; urgency=low
+
   * New: Sorting by name with index model.
   * New: Possibility to choose sorting mode.
   * New: No notes label.
@@ -16,11 +28,13 @@ exnote (1.1.0) unstable; urgency=low
  -- Tomasz Pieniążek <t.pieniazek@gazeta.pl>  Thu, 20 Sep 2012 21:19:35 +0200
 
 exnote (1.0.2) unstable; urgency=low
+
   * Bug fixes
 
  -- Tomasz Pieniążek <t.pieniazek@gazeta.pl>  Sat, 09 Jun 2012 21:35:52 +0200
 
 exnote (1.0.1) unstable; urgency=low
+
   * UI fixes
 
  -- Tomasz Pieniążek <t.pieniazek@gazeta.pl>  Tue, 29 May 2012 17:28:00 +0200

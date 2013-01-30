@@ -8,6 +8,9 @@ FileModel::FileModel(QObject *parent)
      entryList(),
      buckets()
 {
+    // Initialize Utils
+    utils = &Singleton<Utils>::Instance();
+
     numFiles = countFiles();
     insertRows(0, numFiles, QModelIndex());
 }
@@ -23,88 +26,6 @@ int FileModel::countFiles()
     QFileInfoList fileList = files.entryInfoList(QDir::Files, QDir::Time);
 
     return fileList.length();
-}
-
-QDateTime FileModel::getModificationDate(int position)
-{
-    QDir files("/home/user/MyDocs/exnote/");
-    QFileInfoList fileList = files.entryInfoList(QDir::Files, QDir::Time);
-    int fileListLength = fileList.length();
-
-    if (position >= fileListLength || position < 0) {
-        qDebug() << "[E]: No such file:" << position;
-        return QDateTime();
-    }
-
-    QFileInfo fileInfo (fileList.at(position).filePath());
-
-    return fileInfo.lastModified();
-}
-
-QString FileModel::getFileName(int position)
-{
-    QDir files("/home/user/MyDocs/exnote/");
-    QFileInfoList fileList = files.entryInfoList(QDir::Files, QDir::Time);
-    int fileListLength = fileList.length();
-
-    if (position >= fileListLength || position < 0) {
-        qDebug() << "[E]: No such file:" << position;
-        return "";
-    }
-
-    return fileList.at(position).filePath();
-}
-
-QString FileModel::getTextFromFile(int position)
-{
-    QDir files("/home/user/MyDocs/exnote/");
-    QFileInfoList fileList = files.entryInfoList(QDir::Files, QDir::Time);
-    int fileListLength = fileList.length();
-
-    if (position >= fileListLength || position < 0) {
-        qDebug() << "[E]: No such file:" << position;
-        return "";
-    }
-
-    QFile file (fileList.at(position).filePath());
-
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        return "";
-
-    QTextStream in(&file);
-    QString line = in.readLine();
-
-    while (!in.atEnd()) {
-        line += in.readLine();
-
-        if (line.length() > 1200) {
-            break;
-        }
-    }
-
-    //// Parse the title
-    line.replace(QRegExp("<[^>]*/p>"), QString('\n'));
-    line.remove(QRegExp("<[^>]*>"));
-    line.remove("p, li { white-space: pre-wrap; }", Qt::CaseSensitive);
-    // Get only the first line from the title
-    QStringList titleList = line.split(QString('\n'));
-
-    for (int i = 0; i < titleList.length(); i++) {
-        QString newTitle = titleList[i];
-        newTitle.remove(QString('\n'));
-
-        if (!newTitle.isEmpty()) {
-            line = newTitle;
-            break;
-        }
-    }
-
-    // Check if first char is an empty space
-    if (line.at(0) == ' ' || line.at(0) == '\n') {
-        line.remove(0, 1);
-    }
-
-    return line;
 }
 
 /*int FileModel::rowCount(const QModelIndex &parent) const
@@ -183,9 +104,9 @@ bool FileModel::insertRows(int row, int count, const QModelIndex &parent)
     QDateTime modification;
 
     for (int i = row; i < row + count; i++) {
-        data = getTextFromFile(i);
-        name = getFileName(i);
-        modification = getModificationDate(i);
+        data = utils->getTextFromFile(i);
+        name = utils->getFileName(i);
+        modification = utils->getModificationDate(i);
 
         entry = new Entry(name, data, modification);
 

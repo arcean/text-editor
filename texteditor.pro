@@ -9,7 +9,7 @@ QT       += core gui
 TARGET = exnote
 TEMPLATE = app
 
-VERSION = 1.1.2
+VERSION = 1.2.0
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 SOURCES += main.cpp \
@@ -24,7 +24,8 @@ SOURCES += main.cpp \
     sortdialog.cpp \
     sortdialogmodel.cpp \
     settings.cpp \
-    sharecommand.cpp
+    sharecommand.cpp \
+    utils.cpp
 
 HEADERS  += \
     mainpage.h \
@@ -42,7 +43,8 @@ HEADERS  += \
     sortdialogmodel.h \
     settings.h \
     singleton.h \
-    sharecommand.h
+    sharecommand.h \
+    utils.h
 
 FORMS    +=
 

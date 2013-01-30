@@ -9,6 +9,8 @@
 #include <QVector>
 
 #include "entry.h"
+#include "utils.h"
+#include "singleton.h"
 
 class FileModel : public MAbstractItemModel
 {
@@ -50,6 +52,7 @@ class FileModel : public MAbstractItemModel
     int numFiles;
     QVector<Entry *> entryList;
     MLocaleBuckets buckets;
+    Utils *utils;
 
 };
 

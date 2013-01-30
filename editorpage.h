@@ -6,6 +6,9 @@
 #include <MRichTextEdit>
 #include <MBasicSheetHeader>
 
+#include "utils.h"
+#include "singleton.h"
+
 class EditorPage : public MSheet
 {
     Q_OBJECT
@@ -26,7 +29,6 @@ private slots:
     void setFocusOnEditor();
 
 private:
-    QString getNewFilename();
     void writeToFile();
 
     QAction *saveAction;
@@ -35,6 +37,8 @@ private:
     QString fileName;
     int currentRow;
     int parentRow;
+
+    Utils *utils;
     
 };
 
