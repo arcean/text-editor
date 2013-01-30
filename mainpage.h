@@ -48,6 +48,7 @@ private slots:
 
     void deleteAccepted();
     void showConfirmDeleteDialog();
+    void showShareDialog();
 
 private:
     void throwMessage(const QString &text);

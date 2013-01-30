@@ -30,6 +30,7 @@
 #include "aboutdialog.h"
 #include "confirmdeletedialog.h"
 #include "sortdialog.h"
+#include "sharecommand.h"
 
 MainPage::MainPage(QGraphicsItem *parent)
     : MApplicationPage(parent)
@@ -154,6 +155,7 @@ void MainPage::createContent()
     connect(list, SIGNAL(itemLongTapped(QModelIndex)), this, SLOT(showObjectMenu(QModelIndex)));
     connect(list, SIGNAL(itemClicked(QModelIndex)), this, SLOT(showEditor(QModelIndex)));
     connect(removeNote, SIGNAL(triggered()), this, SLOT(showConfirmDeleteDialog()));
+    connect(shareNote, SIGNAL(triggered()), this, SLOT(showShareDialog()));
     connect(aboutDialog, SIGNAL(triggered()), this, SLOT(showAboutDialog()));
     connect(header, SIGNAL(clicked()), this, SLOT(showSortDialog()));
 
@@ -259,6 +261,18 @@ void MainPage::showConfirmDeleteDialog()
     connect(dialog, SIGNAL(accepted()), this, SLOT(deleteAccepted()));
 
     dialog->appear(MSceneWindow::DestroyWhenDone);
+}
+
+void MainPage::showShareDialog()
+{
+    if(longTappedIndex.isValid()) {
+        QString filePath = model->getFilePath(longTappedIndex.row(), longTappedIndex.parent().row());
+
+        ShareCommand ShareCommand;
+        ShareCommand.share(filePath);
+
+        longTappedIndex = QModelIndex();
+    }
 }
 
 void MainPage::showEditor(const QModelIndex& index)

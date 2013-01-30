@@ -23,7 +23,8 @@ SOURCES += main.cpp \
     entry.cpp \
     sortdialog.cpp \
     sortdialogmodel.cpp \
-    settings.cpp
+    settings.cpp \
+    sharecommand.cpp
 
 HEADERS  += \
     mainpage.h \
@@ -40,12 +41,15 @@ HEADERS  += \
     sortdialog.h \
     sortdialogmodel.h \
     settings.h \
-    singleton.h
+    singleton.h \
+    sharecommand.h
 
 FORMS    +=
 
 CONFIG += meegotouch
 CONFIG += meegotouch-boostable
+# Share UI
+CONFIG += shareuiinterface-maemo-meegotouch share-ui-plugin share-ui-common mdatauri
 
 symbian {
     TARGET.UID3 = 0xe8f85d27
