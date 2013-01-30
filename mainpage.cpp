@@ -142,6 +142,9 @@ void MainPage::createContent()
     /////////////////////////////////////////////////// OBJECT MENU
     objectMenu = new MObjectMenu(0);
 
+    MAction *shareNote = new MAction("Share", this);
+    shareNote->setLocation(MAction::ObjectMenuLocation);
+    objectMenu->addAction(shareNote);
     MAction *removeNote = new MAction("Remove", this);
     removeNote->setLocation(MAction::ObjectMenuLocation);
     objectMenu->addAction(removeNote);

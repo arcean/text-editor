@@ -1,8 +1,0 @@
-<aegis>
-	<request policy="add">
-	    <credential name="UID::root" />
-	    <for path="/opt/videozoom/bash/copyFile" />
-            <for path="/opt/videozoom/bash/reboot" />
-            <for path="/opt/videozoom/bash/removeFile" />
-	</request>
-</aegis>
