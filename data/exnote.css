@@ -142,6 +142,10 @@ MApplicationPageStyle#CommonApplicationPageInverted.Landscape {
     margin-right: 0;
 }
 
+MBasicListItem#CommonBasicListItem MLabelStyle#CommonTitle {
+    font: $FONT_FAMILY bold 22;
+}
+
 MBasicListItem#CommonBasicListItem MLabelStyle#CommonSubTitle {
     margin-top: 12px;
     margin-bottom: 4px;  
