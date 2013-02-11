@@ -47,6 +47,7 @@ EditorPage::EditorPage(bool focusOnEditor, QGraphicsItem *parent)
 
     /////////////////////////////////////////////////// CONTENT
     editor = new MRichTextEdit(MTextEditModel::MultiLine);
+    editor->setPrompt("Add a note");
     viewportWidget->setWidget(editor);
 
     /////////////////////////////////////////////////// SIGNALS
