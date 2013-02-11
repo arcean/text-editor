@@ -1,3 +1,17 @@
+/***************************************************************************
+**
+** Copyright (C) 2012, 2013 Tomasz Pieniążek
+** All rights reserved.
+** Contact: Tomasz Pieniążek <t.pieniazek@gazeta.pl>
+**
+** This program is free software; you can redistribute it and/or
+** modify it under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation
+** and appearing in the file LICENSE.LGPL included in the packaging
+** of this file.
+**
+****************************************************************************/
+
 #include <MLayout>
 #include <MLinearLayoutPolicy>
 #include "cell.h"
@@ -5,13 +19,11 @@
 Cell::Cell(MWidget *parent) :
     MListItem(parent)
 {
-    MLayout *layout = new MLayout;
-    this->setLayout(layout);
-    MLinearLayoutPolicy *portraitPolicy = new MLinearLayoutPolicy(layout, Qt::Vertical);
-    layout->setPortraitPolicy(portraitPolicy);
-    portraitPolicy->setContentsMargins(0, 0, 0, 0);
-    portraitPolicy->setSpacing(0);
-    portraitPolicy->setNotifyWidgetsOfLayoutPositionEnabled(true);
+    MLayout *layout = new MLayout(this);
+    MLinearLayoutPolicy *policy = new MLinearLayoutPolicy(layout, Qt::Vertical);
+    policy->setContentsMargins(0, 0, 0, 0);
+    policy->setSpacing(0);
+    policy->setNotifyWidgetsOfLayoutPositionEnabled(true);
 
     line1 = new MLabel();
     line2 = new MLabel();
@@ -28,10 +40,10 @@ Cell::Cell(MWidget *parent) :
     line3->setTextElide(true);
     date->setTextElide(true);
 
-    portraitPolicy->addItem(line1);
-    portraitPolicy->addItem(line2);
-    portraitPolicy->addItem(line3);
-    portraitPolicy->addItem(date);
+    policy->addItem(line1);
+    policy->addItem(line2);
+    policy->addItem(line3);
+    policy->addItem(date);
 
     this->setStyleName("NotesPopupListItem");
 }

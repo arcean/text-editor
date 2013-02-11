@@ -1,3 +1,17 @@
+/***************************************************************************
+**
+** Copyright (C) 2012, 2013 Tomasz Pieniążek
+** All rights reserved.
+** Contact: Tomasz Pieniążek <t.pieniazek@gazeta.pl>
+**
+** This program is free software; you can redistribute it and/or
+** modify it under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation
+** and appearing in the file LICENSE.LGPL included in the packaging
+** of this file.
+**
+****************************************************************************/
+
 #include <MLayout>
 #include <MPannableViewport>
 #include <QGraphicsLinearLayout>
@@ -27,14 +41,14 @@ EditorPage::EditorPage(bool focusOnEditor, QGraphicsItem *parent)
 
     // Create main app viewport
     MPannableViewport *viewportWidget = new MPannableViewport;
-
     this->setCentralWidget(viewportWidget);
+
     /////////////////////////////////////////////////// ACTIONS
 
     /////////////////////////////////////////////////// CONTENT
     editor = new MRichTextEdit(MTextEditModel::MultiLine);
-
     viewportWidget->setWidget(editor);
+
     /////////////////////////////////////////////////// SIGNALS
     connect(sheetHeader->negativeAction(), SIGNAL(triggered()), SLOT(processDialogRejected()));
     connect(sheetHeader->positiveAction(), SIGNAL(triggered()), SLOT(processDialogAccepted()));
@@ -46,9 +60,6 @@ EditorPage::EditorPage(bool focusOnEditor, QGraphicsItem *parent)
     /////////////////////////////////////////////////// OTHER
     // Disable "Save" button
     saveAction->setDisabled(true);
-
-    // Initialize Utils
-    utils = &Singleton<Utils>::Instance();
 }
 
 void EditorPage::setFocusOnEditor()
@@ -77,12 +88,12 @@ void EditorPage::processDialogAccepted()
     this->close();
 }
 
-void EditorPage::loadFile(const QString& filePath, int currentRow, int parentRow)
+void EditorPage::loadFile(const QString& filePath, int filePosition)
 {
     QFile file (filePath);
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qDebug() << "[E]: could not open the file" << filePath;
+        qWarning() << "[E]: could not open the file" << filePath;
         return;
     }
 
@@ -91,42 +102,38 @@ void EditorPage::loadFile(const QString& filePath, int currentRow, int parentRow
 
     while (!in.atEnd()) {
         line += in.readLine();
-       // line += "\n";
     }
 
     editor->setHtml(line);
     this->fileName = filePath;
-    this->currentRow = currentRow;
-    this->parentRow = parentRow;
+    this->filePosition = filePosition;
 }
 
 void EditorPage::writeToFile()
 {
-    QString name;
+    QString text = editor->text();
+    QString oldFileName = fileName;
 
-    if (fileName.length() <= 0) {
-        QString text = editor->text();
+    /* Create a new filename based on the note's text. */
+    Utils::getNewFilename(text);
+    text = "/home/user/MyDocs/exnote/" + text;
+    fileName = text;
 
-        if (text.length() > 32)
-            text.chop(text.length() - 32);
-
-        QString generatedFilename = utils->getNewFilename(text);
-
-        name = "/home/user/MyDocs/exnote/" + generatedFilename;
-    }
-    else
-        name = fileName;
-
-    QFile file(name);
-    file.remove();
+    QFile file(fileName);
 
     file.open(QIODevice::WriteOnly | QIODevice::Text);
     QTextStream out(&file);
     out << editor->toHtml();
     file.close();
 
-    if (fileName.length() <= 0)
-        emit reloadModel(-1, -1);
+    QFile oldFile(oldFileName);
+
+    if (oldFile.exists())
+        oldFile.remove();
+    oldFile.close();
+
+    if (oldFileName.length() > 0)
+        emit reloadModel(filePosition);
     else
-        emit reloadModel(currentRow, parentRow);
+        emit reloadModel(-1);
 }

@@ -1,15 +1,32 @@
+/***************************************************************************
+**
+** Copyright (C) 2012, 2013 Tomasz Pieniążek
+** All rights reserved.
+** Contact: Tomasz Pieniążek <t.pieniazek@gazeta.pl>
+**
+** This program is free software; you can redistribute it and/or
+** modify it under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation
+** and appearing in the file LICENSE.LGPL included in the packaging
+** of this file.
+**
+****************************************************************************/
+
 #include <QDir>
 #include <QFileInfoList>
 #include <QDebug>
+
 #include "filemodel.h"
 
 FileModel::FileModel(QObject *parent)
    : MAbstractItemModel(parent),
+     numFiles(-1),
      entryList(),
-     buckets()
+     buckets(),
+     dateBuckets()
 {
-    // Initialize Utils
-    utils = &Singleton<Utils>::Instance();
+    // Load sorting settings
+    selectedBuckets = Settings::getSortMode();
 
     numFiles = countFiles();
     insertRows(0, numFiles, QModelIndex());
@@ -48,7 +65,10 @@ QVariant FileModel::data(const QModelIndex &index, int role) const
 
 int FileModel::groupCount() const
 {
-    return buckets.bucketCount();
+    if (selectedBuckets)
+        return buckets.bucketCount();
+    else
+        return dateBuckets.bucketCount();
 }
 
 int FileModel::rowCountInGroup(int group) const
@@ -56,21 +76,31 @@ int FileModel::rowCountInGroup(int group) const
     if (group == -1) {
         return entryList.count();
     } else {
-        return buckets.bucketSize(group);
+        if (selectedBuckets)
+            return buckets.bucketSize(group);
+        else
+            return dateBuckets.bucketSize(group);
     }
 }
 
 QString FileModel::groupTitle(int group) const
 {
-    return buckets.bucketName(group);
+    if (selectedBuckets)
+        return buckets.bucketName(group);
+    else
+        return dateBuckets.bucketName(group);
 }
 
 QVariant FileModel::itemData(int row, int group, int role) const
 {
     int flatRow = row;
 
-    if (group >= 0 && row >= 0)
-        flatRow = buckets.origItemIndex(group, row);
+    if (group >= 0 && row >= 0) {
+        if (selectedBuckets)
+            flatRow = buckets.origItemIndex(group, row);
+        else
+            flatRow = dateBuckets.origItemIndex(group, row);
+    }
 
     Q_ASSERT(flatRow >= 0);
     Q_ASSERT(flatRow < entryList.size());
@@ -81,6 +111,9 @@ QVariant FileModel::itemData(int row, int group, int role) const
         rowData << entryList[flatRow]->getFileData();
         // Convert QDateTime to QString e.g. 17 may 2012
         rowData << entryList[flatRow]->getModificationDate().toString("dd MMMM yyyy");
+        // Required by storing system
+        rowData << entryList[flatRow]->getFileName();
+        rowData << QString::number(entryList[flatRow]->getId());
         return QVariant(rowData);
     }
     else if (role == EntrySortRole)
@@ -104,11 +137,11 @@ bool FileModel::insertRows(int row, int count, const QModelIndex &parent)
     QDateTime modification;
 
     for (int i = row; i < row + count; i++) {
-        data = utils->getTextFromFile(i);
-        name = utils->getFileName(i);
-        modification = utils->getModificationDate(i);
+        data = Utils::getTextFromFile(i);
+        name = Utils::getFileName(i);
+        modification = Utils::getModificationDate(i);
 
-        entry = new Entry(name, data, modification);
+        entry = new Entry(name, data, modification, i);
 
         if (entry)
             entries.insert(i, entry);
@@ -117,37 +150,78 @@ bool FileModel::insertRows(int row, int count, const QModelIndex &parent)
     QStringList entriesList;
     foreach (Entry *entry, entries) {
         Q_ASSERT(entry);
-        entriesList << entry->getFileData();
+        if (selectedBuckets)
+            entriesList << entry->getFileData();
+        else
+            entriesList << entry->getModificationDate().toString("dd MMMM yyyy");
     }
 
-    MLocaleBuckets entryBuckets(entriesList);
-    if (entryBuckets.isEmpty()) {
-        qDeleteAll(entries.begin() + entryList.size(), entries.end());
-        return false; // Something went wrong.
-    }
+    if (selectedBuckets) {
+        // MLocaleBuckets
+        MLocaleBuckets entryBuckets(entriesList);
+        if (entryBuckets.isEmpty()) {
+            qDeleteAll(entries.begin() + entryList.size(), entries.end());
+            return false; // Something went wrong.
+        }
 
-    QModelIndex realParent = parent;
-    if (entry) {
-        if (isGrouped()) {
-            for (int i = 0; i < entryBuckets.bucketCount(); i++) {
-                for (int j = 0; j < entryBuckets.bucketSize(i); j++) {
-                    if (entryBuckets.bucketContent(i).at(j) == entry->getFileData()) {
-                        row = j;
-                        realParent = index(i, 0, QModelIndex());
-                        break;
+        QModelIndex realParent = parent;
+        if (entry) {
+            if (isGrouped()) {
+                for (int i = 0; i < entryBuckets.bucketCount(); i++) {
+                    for (int j = 0; j < entryBuckets.bucketSize(i); j++) {
+                        if (entryBuckets.bucketContent(i).at(j) == entry->getFileData()) {
+                            row = j;
+                            realParent = index(i, 0, QModelIndex());
+                            break;
+                        }
                     }
                 }
             }
         }
+
+        if (isGrouped() && !parent.isValid())
+            beginInsertRows(QModelIndex(), row, row + (entryBuckets.bucketCount() - buckets.bucketCount()) - 1, count == 1);
+        else
+            beginInsertRows(realParent, row, row + count - 1, count == 1);
+
+        entryList = entries;
+        buckets = entryBuckets;
+
     }
-    if (isGrouped() && !parent.isValid())
-        beginInsertRows(QModelIndex(), row, row + (entryBuckets.bucketCount() - buckets.bucketCount()) - 1, count == 1);
-    else
-        beginInsertRows(realParent, row, row + count - 1, count == 1);
+    else {
 
-    entryList = entries;
-    buckets = entryBuckets;
+        // MBuckets
+        MBuckets entryBuckets(entriesList);
+        if (entryBuckets.isEmpty()) {
+            qDeleteAll(entries.begin() + entryList.size(), entries.end());
+            return false; // Something went wrong.
+        }
 
+        QModelIndex realParent = parent;
+        if (entry) {
+            if (isGrouped()) {
+                for (int i = 0; i < entryBuckets.bucketCount(); i++) {
+                    for (int j = 0; j < entryBuckets.bucketSize(i); j++) {
+                        if (entryBuckets.bucketContent(i).at(j) == entry->getFileData()) {
+                            row = j;
+                            realParent = index(i, 0, QModelIndex());
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (isGrouped() && !parent.isValid())
+            beginInsertRows(QModelIndex(), row, row + (entryBuckets.bucketCount() - dateBuckets.bucketCount()) - 1, count == 1);
+        else
+            beginInsertRows(realParent, row, row + count - 1, count == 1);
+
+        entryList = entries;
+        dateBuckets = entryBuckets;
+    }
+
+    regenerateEntries();
     endInsertRows();
 
     if (isGrouped()) {
@@ -166,8 +240,12 @@ bool FileModel::removeRows(int row, int count, const QModelIndex &parent)
     int flatRow = row;
     int group = parent.row();
 
-    if (isGrouped() && group >= 0)
-        flatRow = buckets.origItemIndex(group, row);
+    if (isGrouped() && group >= 0) {
+        if (selectedBuckets)
+            flatRow = buckets.origItemIndex(group, row);
+        else
+            flatRow = dateBuckets.origItemIndex(group, row);
+    }
 
     Q_ASSERT(row >= 0);
     Q_ASSERT(row < entryList.size());
@@ -176,10 +254,15 @@ bool FileModel::removeRows(int row, int count, const QModelIndex &parent)
     qDeleteAll(entryList.begin() + flatRow, entryList.begin() + flatRow + count - 1);
     entryList.remove(flatRow, count);
 
-    if (isGrouped() && group >= 0)
-        buckets.removeBucketItems(group, row, count);
-    //else
+    if (isGrouped() && group >= 0) {
+        if (selectedBuckets)
+            buckets.removeBucketItems(group, row, count);
+        else
+            dateBuckets.removeBucketItems(group, row, count);
+    }
+
     regenerateModel();
+    regenerateEntries();
 
     endRemoveRows();
 
@@ -193,6 +276,7 @@ void FileModel::clear()
         qDeleteAll(entryList);
         entryList.clear();
         buckets.clear();
+        dateBuckets.clear();
         endResetModel();
     }
 }
@@ -203,10 +287,43 @@ void FileModel::regenerateModel()
 
     foreach (Entry *entry, entryList) {
         Q_ASSERT(entry);
-        itemList << entry->getFileData();
+        if (selectedBuckets)
+            itemList << entry->getFileData();
+        else
+            itemList << entry->getModificationDate().toString("dd MMMM yyyy");
     }
 
-    buckets.setItems(itemList);
+    if (selectedBuckets)
+        buckets.setItems(itemList);
+    else
+        dateBuckets.setItems(itemList);
+}
+
+void FileModel::changeModel()
+{
+    QStringList itemList;
+
+    // Update selectedBuckets value, which could've been changed
+    selectedBuckets = Settings::getSortMode();
+
+    foreach (Entry *entry, entryList) {
+        Q_ASSERT(entry);
+        if (selectedBuckets)
+            itemList << entry->getFileData();
+        else
+            itemList << entry->getModificationDate().toString("dd MMMM yyyy");
+    }
+
+    beginResetModel();
+    buckets.clear();
+    dateBuckets.clear();
+
+    if (selectedBuckets)
+        buckets.setItems(itemList);
+    else
+        dateBuckets.setItems(itemList);
+
+    endResetModel();
 }
 
 void FileModel::updateData(const QModelIndex &first, const QModelIndex &last)
@@ -217,11 +334,15 @@ void FileModel::updateData(const QModelIndex &first, const QModelIndex &last)
 QString FileModel::getFilePath(int index, int parentIndex)
 {
     // Where: parentIndex == parent.row() == group
-    if (isGrouped() && parentIndex >= 0)
-        index = buckets.origItemIndex(parentIndex, index);
+    if (isGrouped() && parentIndex >= 0) {
+        if (selectedBuckets)
+            index = buckets.origItemIndex(parentIndex, index);
+        else
+            index = dateBuckets.origItemIndex(parentIndex, index);
+    }
 
     if (index < 0 || index > entryList.size()) {
-        qDebug() << "[E]: index >> filesName";
+        qWarning() << "[E]: index >> filesName";
         return "";
     }
 
@@ -230,8 +351,26 @@ QString FileModel::getFilePath(int index, int parentIndex)
 
 int FileModel::getCurrentRow(int row, int parentRow)
 {
-    if (isGrouped() && parentRow >= 0)
-        row = buckets.origItemIndex(parentRow, row);
+    if (isGrouped() && parentRow >= 0) {
+        if (selectedBuckets)
+            row = buckets.origItemIndex(parentRow, row);
+        else
+            row = dateBuckets.origItemIndex(parentRow, row);
+    }
 
     return row;
+}
+
+int FileModel::getNumOfEntries()
+{
+    return entryList.size();
+}
+
+void FileModel::regenerateEntries()
+{
+    if (entryList.size() > 1) {
+        for (int i = 1; i < entryList.size(); i++) {
+            entryList[i]->setId(i);
+        }
+    }
 }

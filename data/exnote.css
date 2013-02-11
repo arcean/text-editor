@@ -275,3 +275,61 @@ MComboBoxStyle {
     indicator-object-name:          "CommonComboBoxIconInverted";
 }
 
+/* Filtering text edit */
+#FilteringTextEditContainer {
+    margin-top: 14px;
+    margin-bottom: 14px;
+    margin-left: $INDENT_DEFAULT;
+    margin-right: $INDENT_DEFAULT;
+    background-image: meegotouch-textedit-background $CORNER_MARGINS;
+}
+
+#FilteringTextEditContainer:selected {
+    background-image: color19-meegotouch-textedit-background-selected $CORNER_MARGINS;
+}
+
+#CommonSingleInputField {
+    margin-right: 0;
+    margin-left: 0;
+    padding-right: 0;
+    background-image:;
+    background-opacity: 0.0;
+}
+
+#CommonSingleInputField:selected {
+    background-image:;
+    background-opacity: 0.0;
+}
+
+#FilteringButton {
+    margin-right: $MARGIN_SMALL;
+    icon-size: $SIZE_ICON_LARGE $SIZE_ICON_LARGE;
+    minimum-size: 56px 56px;
+    maximum-size: 56px 56px;
+    padding-right: 0;
+    padding-left: 0;
+    padding-bottom: 0;
+    padding-top: 0;
+    background-image:;
+    background-color:;
+    background-opacity: 0.0;
+}
+
+#FilteringButton:pressed {
+    content-opacity: 1.0;
+}
+
+/* MList Index (fast scroll) */
+#whiteFont {
+    minimum-size:   0 0;
+    preferred-size: 0 0;
+    maximum-size: 0 0;
+}
+
+MListIndexTooltip MLabelStyle {
+    color: $COLOR_INVERTED_FOREGROUND;
+    font: $FONT_FAMILY light 48;
+
+    horizontal-alignment: left;
+    vertical-alignment: vcenter;
+}

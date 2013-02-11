@@ -25,7 +25,9 @@ SOURCES += main.cpp \
     sortdialogmodel.cpp \
     settings.cpp \
     sharecommand.cpp \
-    utils.cpp
+    utils.cpp \
+    MTextEditFilter/mtexteditfilter.cpp \
+    mbuckets.cpp
 
 HEADERS  += \
     mainpage.h \
@@ -44,7 +46,12 @@ HEADERS  += \
     settings.h \
     singleton.h \
     sharecommand.h \
-    utils.h
+    utils.h \
+    MTextEditFilter/WidgetAnimationOut.h \
+    MTextEditFilter/WidgetAnimationIn.h \
+    MTextEditFilter/mtexteditfilter.h \
+    mbuckets_p.h \
+    mbuckets.h
 
 FORMS    +=
 

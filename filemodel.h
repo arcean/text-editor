@@ -1,3 +1,17 @@
+/***************************************************************************
+**
+** Copyright (C) 2012, 2013 Tomasz Pieniążek
+** All rights reserved.
+** Contact: Tomasz Pieniążek <t.pieniazek@gazeta.pl>
+**
+** This program is free software; you can redistribute it and/or
+** modify it under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation
+** and appearing in the file LICENSE.LGPL included in the packaging
+** of this file.
+**
+****************************************************************************/
+
 #ifndef FILEMODEL_H
 #define FILEMODEL_H
 
@@ -11,6 +25,8 @@
 #include "entry.h"
 #include "utils.h"
 #include "singleton.h"
+#include "mbuckets.h"
+#include "settings.h"
 
 class FileModel : public MAbstractItemModel
 {
@@ -39,20 +55,26 @@ class FileModel : public MAbstractItemModel
     QString getFilePath(int index, int parentIndex);
     int getCurrentRow(int row, int parentRow);
 
+    void changeModel();
+
     int countFiles();
+    int getNumOfEntries();
     void clear();
 
  private:
     QString getTextFromFile(int position);
     QDateTime getModificationDate(int position);
     QString getFileName(int position);
+    void regenerateEntries();
 
     void regenerateModel();
 
     int numFiles;
     QVector<Entry *> entryList;
+    // Buckets
     MLocaleBuckets buckets;
-    Utils *utils;
+    MBuckets dateBuckets;
+    int selectedBuckets; // 0 - buckets, 1 - dateBuckets
 
 };
 

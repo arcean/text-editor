@@ -1,3 +1,17 @@
+/***************************************************************************
+**
+** Copyright (C) 2013 Tomasz Pieniążek
+** All rights reserved.
+** Contact: Tomasz Pieniążek <t.pieniazek@gazeta.pl>
+**
+** This program is free software; you can redistribute it and/or
+** modify it under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation
+** and appearing in the file LICENSE.LGPL included in the packaging
+** of this file.
+**
+****************************************************************************/
+
 #include <QFile>
 #include <QDir>
 #include <QRegExp>
@@ -10,6 +24,16 @@ Utils::Utils(QObject *parent) :
 {
 }
 
+bool Utils::createDirIfNotExists()
+{
+    QDir dir("/home/user/MyDocs/exnote");
+
+    if (!dir.exists())
+        return dir.mkpath(".");
+
+    return false;
+}
+
 QDateTime Utils::getModificationDate(int position)
 {
     QDir files("/home/user/MyDocs/exnote/");
@@ -17,7 +41,7 @@ QDateTime Utils::getModificationDate(int position)
     int fileListLength = fileList.length();
 
     if (position >= fileListLength || position < 0) {
-        qDebug() << "[E]: No such file:" << position;
+        qWarning() << "[E]: No such file:" << position;
         return QDateTime();
     }
 
@@ -33,7 +57,7 @@ QString Utils::getFileName(int position)
     int fileListLength = fileList.length();
 
     if (position >= fileListLength || position < 0) {
-        qDebug() << "[E]: No such file:" << position;
+        qWarning() << "[E]: No such file:" << position;
         return "";
     }
 
@@ -47,7 +71,7 @@ QString Utils::getTextFromFile(int position)
     int fileListLength = fileList.length();
 
     if (position >= fileListLength || position < 0) {
-        qDebug() << "[E]: No such file:" << position;
+        qWarning() << "[E]: No such file:" << position;
         return "";
     }
 
@@ -94,6 +118,9 @@ QString Utils::getTextFromFile(int position)
 
 QString Utils::getNewFilenameWithDate()
 {
+    /* Create the app directory */
+    createDirIfNotExists();
+
     QDir appDir("/home/user/MyDocs/exnote/");
     bool ready = false;
     int counter = 0;
@@ -126,12 +153,38 @@ QString Utils::getNewFilenameWithDate()
     return file.fileName();
 }
 
-QString Utils::getNewFilename(QString text)
+void Utils::getNewFilename(QString &text)
 {
-    //// Parse the title
+    /* Create the app directory */
+    createDirIfNotExists();
+
+    /* Max filename length ~= 28 */
+    if (text.length() > 28)
+        text.chop(text.length() - 28);
+
+    /* Parse the title */
     text.replace(QRegExp("<[^>]*/p>"), QString('\n'));
     text.remove(QRegExp("<[^>]*>"));
     text.remove("p, li { white-space: pre-wrap; }", Qt::CaseSensitive);
+    /* Replace forbidden chars */
+    text.replace(".", "_");
+    text.replace(",", "_");
+    text.replace(";", "_");
+    text.replace(":", "_");
+    text.replace("#", "_");
+    text.replace("%", "_");
+    text.replace("&", "_");
+    text.replace("*", "_");
+    text.replace("<", "_");
+    text.replace(">", "_");
+    text.replace("?", "_");
+    text.replace("/", "_");
+    text.replace("|", "_");
+    text.replace("\\", "_");
+    text.replace("{", "_");
+    text.replace("}", "_");
+    text.replace("\"", "_");
+    text.replace("'", "_");
     // Get only the first line from the title
     QStringList titleList = text.split(QString('\n'));
 
@@ -164,18 +217,15 @@ QString Utils::getNewFilename(QString text)
             file.setFileName(text + ".html");
 
         if(!file.exists()) {
-            qDebug() << "Rerutns" << file.fileName();
-            return file.fileName();
+            text = file.fileName();
+            return;
         }
 
         counter++;
 
-        if(counter > 500000)
+        if(counter > 65536)
             ready = true;
     }
 
-
-    qDebug() << "Rerutns" << file.fileName();
-
-    return file.fileName();
+    text = file.fileName();
 }

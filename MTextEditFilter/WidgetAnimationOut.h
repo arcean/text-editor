@@ -12,30 +12,25 @@
 **
 ****************************************************************************/
 
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef WIDGETANIMATIONOUT_H
+#define WIDGETANIMATIONOUT_H
 
 #include <QObject>
-#include <QString>
-#include <QDateTime>
+#include <MAnimation>
+#include <QGraphicsItem>
 
-class Utils : public QObject
-{
+class WidgetAnimationOut : public MAnimation {
     Q_OBJECT
-public:
-    explicit Utils(QObject *parent = 0);
+    //M_ANIMATION(FadeInAnimationStyle)
 
-    static QString getTextFromFile(int position);
-    static QDateTime getModificationDate(int position);
-    static QString getFileName(int position);
-    static QString getNewFilenameWithDate();
-    static void getNewFilename(QString &text);
-    static bool createDirIfNotExists();
-    
-signals:
-    
-public slots:
-    
+  public:
+    WidgetAnimationOut(QGraphicsItem *item, QObject *parent = NULL) : MAnimation(parent),mItem(item) {};
+    virtual void updateCurrentTime (int currentTime ) {
+       mItem->setOpacity(50.0/currentTime);
+    }
+    virtual int duration () const { return 50; }
+  protected:
+    QGraphicsItem *mItem;
 };
 
-#endif // UTILS_H
+#endif // WIDGETANIMATIONOUT_H

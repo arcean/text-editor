@@ -1,3 +1,17 @@
+/***************************************************************************
+**
+** Copyright (C) 2012, 2013 Tomasz Pieniążek
+** All rights reserved.
+** Contact: Tomasz Pieniążek <t.pieniazek@gazeta.pl>
+**
+** This program is free software; you can redistribute it and/or
+** modify it under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation
+** and appearing in the file LICENSE.LGPL included in the packaging
+** of this file.
+**
+****************************************************************************/
+
 #include <QGraphicsLinearLayout>
 #include <MButton>
 #include <MLayout>
@@ -23,6 +37,8 @@
 #include <MBasicListItem>
 #include <QFile>
 #include <MSceneManager>
+#include <MListFilter>
+#include <MPositionIndicator>
 
 #include "mainpage.h"
 #include "editorpage.h"
@@ -52,7 +68,10 @@ void MainPage::createContent()
     theme->loadCSS("/opt/exnote/style/exnote.css");
     applicationWindow()->setStyleName("CommonApplicationWindow");
     setStyleName("CommonApplicationPage");
-    MLayout *layout = new MLayout(this);
+    // "this->centralWidget()" instead of "this" fixes overlaping list by toolbar:
+    QGraphicsLinearLayout *mainLayout = new QGraphicsLinearLayout(Qt::Vertical, this->centralWidget());
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setSpacing(0);
 
     /////////////////////////////////////////////////// HEADER VIEW
 
@@ -65,15 +84,12 @@ void MainPage::createContent()
     ClickableViewHeader *header = new ClickableViewHeader;
     header->setTitle("exNote");
 
-    MLinearLayoutPolicy *portraitPolicy = new MLinearLayoutPolicy(layout, Qt::Vertical);
-    layout->setPortraitPolicy(portraitPolicy);
-    portraitPolicy->setContentsMargins(0, 0, 0, 0);
-    portraitPolicy->setSpacing(0);
-    portraitPolicy->setNotifyWidgetsOfLayoutPositionEnabled(true);
     // Create main app viewport
-    MPannableViewport *viewportWidget = new MPannableViewport;
+    viewportWidget = new MPannableViewport;
     // Create layout for the main app viewport
     MLayout *viewportLayout = new MLayout();
+    layoutAnimation = new MBasicLayoutAnimation(viewportLayout);
+
     // Create widget for integrating the layout with the viewport
     QGraphicsWidget *form = new QGraphicsWidget();
     form->setLayout(viewportLayout);
@@ -81,20 +97,21 @@ void MainPage::createContent()
     // Create layout policy for the main app viewport
     viewportLayoutPolicy = new MLinearLayoutPolicy(viewportLayout, Qt::Vertical);
     viewportLayoutPolicy->setObjectName("ListViewport");
+    viewportLayoutPolicy->setContentsMargins(0, 0, 0, 0);
+    viewportLayoutPolicy->setSpacing(0);
+    viewportLayoutPolicy->setNotifyWidgetsOfLayoutPositionEnabled(true);
     // Add header to the layout
-    portraitPolicy->addItem(header);
+    mainLayout->addItem(header);
     // Add viewportWidget to layout (main layout)
-    portraitPolicy->addItem(viewportWidget);
+    mainLayout->addItem(viewportWidget);
 
     /////////////////////////////////////////////////// SETTINGS SINGLETON
-    // Needed by list and model.
-    settings = &Singleton<Settings>::Instance();
 
     /////////////////////////////////////////////////// CONTENT
 
-    list = new MList(this);
+    list = new MList();
     list->setObjectName("ListStyle");
-    MListItemCreator *cellCreator = new MListItemCreator;
+    cellCreator = new MListItemCreator;
     list->setCellCreator(cellCreator);
     model = new FileModel();
     // PROXY MODEL
@@ -105,12 +122,21 @@ void MainPage::createContent()
     proxyModel->setSourceModel(model);
 
     list->setItemModel(proxyModel);
+
     // Load sorting settings
-    if (settings->getSortMode() == 1) {
-        model->setGrouped(true);
-        list->setShowGroups(true);
-    }
+    model->setGrouped(true);
+    list->setShowGroups(true);
     list->setIndexDisplayMode(MList::Auto);
+    list->setAutoFillBackground(false);
+
+    // MTextEditFilter
+    editFilter = new MTextEditFilter();
+    editFilter->editor = list->filtering()->editor();
+    editFilter->connectAll();
+    list->filtering()->setEnabled(true);
+    list->filtering()->setFilterRole(FileModel::EntryFilterRole);
+    list->filtering()->editor()->setVisible(false);
+    isEditFilterInserted = false;
 
     noNotesLabel = new MLabel("Add your first note");
     noNotesLabel->setStyleName("CommonEmptyStateTitle");
@@ -119,11 +145,11 @@ void MainPage::createContent()
     noNotesLabel->setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
 
     if (model->countFiles() > 0) {
-        viewportLayoutPolicy->addItem(list);
+        viewportLayoutPolicy->insertItem(2, list);
         isListVisible = true;
     }
     else {
-        viewportLayoutPolicy->addItem(noNotesLabel);
+        viewportLayoutPolicy->insertItem(1, noNotesLabel);
         isListVisible = false;
     }
 
@@ -158,15 +184,74 @@ void MainPage::createContent()
     connect(shareNote, SIGNAL(triggered()), this, SLOT(showShareDialog()));
     connect(aboutDialog, SIGNAL(triggered()), this, SLOT(showAboutDialog()));
     connect(header, SIGNAL(clicked()), this, SLOT(showSortDialog()));
+    connect(list->filtering(), SIGNAL(listPannedUpFromTop()), this, SLOT(listPannedUpFromTop()));
+    connect(editFilter, SIGNAL(widgetHidden()), this, SLOT(removeEditFilterWidget()));
+    connect(list, SIGNAL(geometryChanged()), this, SLOT(decideNoNotesLabel()));
+    connect(list, SIGNAL(panningStarted()), this, SLOT(listPanningStarted()));
+   // connect(list->filtering()->editor(), SIGNAL(textChanged()), this, SLOT(highlightFilteredText()));
 
     /////////////////////////////////////////////////// OTHER
+    // FIXME: implement banners.
     // Create info banner.
     //infoBanner = new MBanner();
 }
 
+void MainPage::highlightFilteredText()
+{
+    // FIXME:
+    //cellCreator->highlightByText(list->filtering()->editor()->text());
+}
+
+void MainPage::listPanningStarted()
+{
+    list->setFocus();
+}
+
+void MainPage::insertNoNotesLabel()
+{
+    viewportLayoutPolicy->removeItem(list);
+    viewportLayoutPolicy->removeItem(noNotesLabel);
+    noNotesLabel->setText("Add your first note");
+    viewportLayoutPolicy->insertItem(1, noNotesLabel);
+    viewportLayoutPolicy->setStretchFactor(noNotesLabel, 5);
+}
+
+void MainPage::insertNothingFoundLabel()
+{
+    viewportLayoutPolicy->removeItem(noNotesLabel);
+    noNotesLabel->setText("No notes found");
+    viewportLayoutPolicy->removeItem(list);
+    viewportLayoutPolicy->insertItem(1, noNotesLabel);
+    viewportLayoutPolicy->setStretchFactor(noNotesLabel, 0);
+    viewportLayoutPolicy->insertItem(2, list);
+}
+
+// Removes the widget from the window after the animation is finished.
+void MainPage::removeEditFilterWidget()
+{
+    list->filtering()->editor()->setText("");
+    list->filtering()->editor()->setVisible(false);
+    viewportLayoutPolicy->removeItem(editFilter);
+    isEditFilterInserted = false;
+}
+
+//  Decides if we should show editFilter widget
+void MainPage::listPannedUpFromTop()
+{
+    // Do not show the editFilter widget the list is empty.
+    bool itemsAvailable = model->countFiles() > 0 ? true : false;
+
+    if (!isEditFilterInserted && itemsAvailable) {
+        isEditFilterInserted = true;
+        list->filtering()->editor()->setVisible(true);
+        viewportLayoutPolicy->insertItem(0, editFilter);
+        editFilter->showWidget();
+    }
+}
+
 void MainPage::showSortDialog()
 {
-    SortDialog *sortDialog = new SortDialog(settings->getSortMode());
+    SortDialog *sortDialog = new SortDialog(Settings::getSortMode());
 
     connect(sortDialog, SIGNAL(sortTypeChanged(int)), this, SLOT(parseSortDialogOutput(int)));
     sortDialog->appear(MSceneWindow::DestroyWhenDone);
@@ -174,16 +259,8 @@ void MainPage::showSortDialog()
 
 void MainPage::parseSortDialogOutput(int sortType)
 {
-    if (sortType == 0) {
-        list->setShowGroups(false);
-        model->setGrouped(false);
-        settings->setSortMode(0);
-    }
-    else if (sortType == 1) {
-        list->setShowGroups(true);
-        model->setGrouped(true);
-        settings->setSortMode(1);
-    }
+    Settings::setSortMode(sortType);
+    model->changeModel();
 }
 
 void MainPage::showAboutDialog()
@@ -194,39 +271,54 @@ void MainPage::showAboutDialog()
 
 void MainPage::decideNoNotesLabel()
 {
-    bool show = model->countFiles() > 0 ? true : false;
+    bool itemsAvailable = model->countFiles() > 0 ? true : false;
+    bool isHeightOk = list->geometry().height() > 0;
 
-    if (!show && isListVisible) {
-        viewportLayoutPolicy->removeItem(list);
-        viewportLayoutPolicy->addItem(noNotesLabel);
+    if (!itemsAvailable && isListVisible) {
+        insertNoNotesLabel();
         isListVisible = false;
     }
-    else if (show && !isListVisible) {
+    else if (itemsAvailable && isListVisible && !isHeightOk) {
+        insertNothingFoundLabel();
+        isListVisible = false;
+    }
+    else if (itemsAvailable && !isListVisible && isHeightOk) {
         viewportLayoutPolicy->removeItem(noNotesLabel);
-        viewportLayoutPolicy->addItem(list);
+        viewportLayoutPolicy->removeItem(list);
+        viewportLayoutPolicy->insertItem(2, list);
         isListVisible = true;
     }
 }
 
-void MainPage::reloadModel(int oldRow, int oldParentRow)
+void MainPage::reloadModel(int filePosition)
 {
-    int flatRow = model->getCurrentRow(oldRow, oldParentRow);
+    removeEditFilterWidget();
 
-    if (flatRow == -1)
+    if (!isListVisible)
+        viewportLayoutPolicy->insertItem(2, list);
+
+    if (filePosition == -1)
         list->itemModel()->insertRows(0, 1, QModelIndex());
     else {
-        // Firstly, remove current row
-        list->itemModel()->removeRows(flatRow, 1, QModelIndex());
-        // Then insert a new one at 0
+        /* Firstly, remove current row.
+         * Strangely the following line sometimes doesn't work.
+         */
+        //list->itemModel()->removeRows(filePosition, 1, QModelIndex());
+        model->removeRows(filePosition, 1, QModelIndex());
+
+        // Then insert a new one at 0.
         list->itemModel()->insertRows(0, 1, QModelIndex());
     }
+
+    if (!isListVisible)
+        viewportLayoutPolicy->removeAt(2);
 
     decideNoNotesLabel();
 }
 
 void MainPage::showObjectMenu(const QModelIndex &index)
 {
-    // Show objectMenu
+    // Show objectMenu.
     sceneManager()->appearSceneWindow(objectMenu);
     longTappedIndex = index;
 }
@@ -234,7 +326,9 @@ void MainPage::showObjectMenu(const QModelIndex &index)
 void MainPage::removeNoteSlot()
 {
     if(longTappedIndex.isValid()) {
-        QString filePath = model->getFilePath(longTappedIndex.row(), longTappedIndex.parent().row());
+        QVariant data = longTappedIndex.data(Qt::DisplayRole);
+        QStringList rowData = data.value<QStringList>();
+        QString filePath = rowData[2];
         QFile file(filePath);
 
         file.remove();
@@ -245,6 +339,8 @@ void MainPage::removeNoteSlot()
 
         longTappedIndex = QModelIndex();
 
+        if (model->countFiles() == 0)
+            removeEditFilterWidget();
         decideNoNotesLabel();
     }
 }
@@ -266,7 +362,9 @@ void MainPage::showConfirmDeleteDialog()
 void MainPage::showShareDialog()
 {
     if(longTappedIndex.isValid()) {
-        QString filePath = model->getFilePath(longTappedIndex.row(), longTappedIndex.parent().row());
+        QVariant data = longTappedIndex.data(Qt::DisplayRole);
+        QStringList rowData = data.value<QStringList>();
+        QString filePath = rowData[2];
 
         ShareCommand shareCommand;
         shareCommand.share(filePath);
@@ -277,12 +375,15 @@ void MainPage::showShareDialog()
 
 void MainPage::showEditor(const QModelIndex& index)
 {
-    QString filePath = model->getFilePath(index.row(), index.parent().row());
-
+    QVariant data = index.data(Qt::DisplayRole);
+    QStringList rowData = data.value<QStringList>();
+    QString filePath = rowData[2];
+    int filePosition = rowData[3].toInt();
     EditorPage *editor = new EditorPage();
-    editor->loadFile(filePath, index.row(), index.parent().row());
 
-    connect(editor, SIGNAL(reloadModel(int, int)), this, SLOT(reloadModel(int, int)));
+    editor->loadFile(filePath, filePosition);
+
+    connect(editor, SIGNAL(reloadModel(int)), this, SLOT(reloadModel(int)));
 
     editor->appear(MSceneWindow::DestroyWhenDismissed);
 }
@@ -292,7 +393,7 @@ void MainPage::showNewEditor()
     // Focus on the text entry
     EditorPage *editor = new EditorPage(true);
 
-    connect(editor, SIGNAL(reloadModel(int, int)), this, SLOT(reloadModel(int, int)));
+    connect(editor, SIGNAL(reloadModel(int)), this, SLOT(reloadModel(int)));
 
     editor->appear(MSceneWindow::DestroyWhenDismissed);
 }
