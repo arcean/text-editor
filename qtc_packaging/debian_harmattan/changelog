@@ -1,11 +1,12 @@
 exnote (1.2.0) unstable; urgency=low
 
   * Added: sharing funcionality.
+  * Added: filtering feature.
   * Changed: file naming scheme.
   * Changed: moved some parts of the code to Utils class.
   * Fixed: there's a space before the title.
 
- -- Tomasz Pieniążek <t.pieniazek@gazeta.pl>  Mon, 30 Jan 2013 18:43:00 +0200
+ -- Tomasz Pieniążek <t.pieniazek@gazeta.pl>  Mon, 11 Feb 2013 16:03:00 +0200
 
 exnote (1.1.2) unstable; urgency=low
 
