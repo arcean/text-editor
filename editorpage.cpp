@@ -115,6 +115,13 @@ void EditorPage::writeToFile()
     QString text = editor->text();
     QString oldFileName = fileName;
 
+    /* Remove the old file. */
+    QFile oldFile(oldFileName);
+
+    if (oldFile.exists())
+        oldFile.remove();
+    oldFile.close();
+
     /* Create a new filename based on the note's text. */
     Utils::getNewFilename(text);
     text = "/home/user/MyDocs/exnote/" + text;
@@ -126,12 +133,6 @@ void EditorPage::writeToFile()
     QTextStream out(&file);
     out << editor->toHtml();
     file.close();
-
-    QFile oldFile(oldFileName);
-
-    if (oldFile.exists())
-        oldFile.remove();
-    oldFile.close();
 
     if (oldFileName.length() > 0)
         emit reloadModel(filePosition);
