@@ -28,7 +28,7 @@ MEditor::MEditor(QGraphicsItem *parent)
 
     textEditor = new MRichTextEdit(MTextEditModel::MultiLine);
     textEditor->setStyleName("CommonEditorNoteArea");
-    textEditor->setPrompt("Add a note");
+    textEditor->setPrompt("Add note");
     mainLayout->addItem(textEditor);
 }
 
