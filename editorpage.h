@@ -22,6 +22,7 @@
 
 #include "utils.h"
 #include "singleton.h"
+#include "meditor.h"
 
 class EditorPage : public MSheet
 {
@@ -46,7 +47,8 @@ private:
     void writeToFile();
 
     QAction *saveAction;
-    MRichTextEdit *editor;
+    //MRichTextEdit *editor;
+    MEditor *editor;
     // Current filename
     QString fileName;
     int filePosition;

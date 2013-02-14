@@ -22,6 +22,7 @@
 #include <QDateTime>
 #include <QDir>
 #include <QDebug>
+#include <QFileInfo>
 
 #include "editorpage.h"
 #include "viewHeader.h"
@@ -46,17 +47,18 @@ EditorPage::EditorPage(bool focusOnEditor, QGraphicsItem *parent)
     /////////////////////////////////////////////////// ACTIONS
 
     /////////////////////////////////////////////////// CONTENT
-    editor = new MRichTextEdit(MTextEditModel::MultiLine);
-    editor->setPrompt("Add a note");
+    editor = new MEditor(this);
     viewportWidget->setWidget(editor);
 
     /////////////////////////////////////////////////// SIGNALS
     connect(sheetHeader->negativeAction(), SIGNAL(triggered()), SLOT(processDialogRejected()));
     connect(sheetHeader->positiveAction(), SIGNAL(triggered()), SLOT(processDialogAccepted()));
-    connect(editor, SIGNAL(textChanged()), this, SLOT(enableSaveButton()));
+    connect(editor->getTextEditor(), SIGNAL(textChanged()), this, SLOT(enableSaveButton()));
 
-    if (focusOnEditor)
+    if (focusOnEditor) {
+        editor->setAutoDateTime();
         connect(this, SIGNAL(appeared()), this, SLOT(setFocusOnEditor()));
+    }
 
     /////////////////////////////////////////////////// OTHER
     // Disable "Save" button
@@ -71,7 +73,7 @@ void EditorPage::setFocusOnEditor()
 
 void EditorPage::enableSaveButton()
 {
-    bool disable = editor->text().length() > 0 ? false : true;
+    bool disable = editor->getTextEditor()->text().length() > 0 ? false : true;
 
     saveAction->setDisabled(disable);
 }
@@ -83,7 +85,7 @@ void EditorPage::processDialogRejected()
 
 void EditorPage::processDialogAccepted()
 {
-    if (editor->text().length() > 0)
+    if (editor->getTextEditor()->text().length() > 0)
         writeToFile();
 
     this->close();
@@ -92,6 +94,9 @@ void EditorPage::processDialogAccepted()
 void EditorPage::loadFile(const QString& filePath, int filePosition)
 {
     QFile file (filePath);
+    QFileInfo fileInfo(file);
+    QString lastModifiedString = fileInfo.lastModified().toString("d MMM yyyy | h:mm");
+
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qWarning() << "[E]: could not open the file" << filePath;
@@ -105,14 +110,15 @@ void EditorPage::loadFile(const QString& filePath, int filePosition)
         line += in.readLine();
     }
 
-    editor->setHtml(line);
+    editor->getTextEditor()->setHtml(line);
+    editor->setDateTime(lastModifiedString);
     this->fileName = filePath;
     this->filePosition = filePosition;
 }
 
 void EditorPage::writeToFile()
 {
-    QString text = editor->text();
+    QString text = editor->getTextEditor()->text();
     QString oldFileName = fileName;
 
     /* Remove the old file. */
@@ -131,7 +137,7 @@ void EditorPage::writeToFile()
 
     file.open(QIODevice::WriteOnly | QIODevice::Text);
     QTextStream out(&file);
-    out << editor->toHtml();
+    out << editor->getTextEditor()->toHtml();
     file.close();
 
     if (oldFileName.length() > 0)

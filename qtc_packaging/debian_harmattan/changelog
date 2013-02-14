@@ -1,9 +1,10 @@
 exnote (1.2.1) unstable; urgency=low
 
   * Added: Text prompt in the editor.
+  * Added: New editor page, similar to the Note application.
   * Fixed: Note after modification is stored with wrong filename.
 
- -- Tomasz Pieniążek <t.pieniazek@gazeta.pl>  Wed, 13 Feb 2013 12:04:00 +0200
+ -- Tomasz Pieniążek <t.pieniazek@gazeta.pl>  Wed, 14 Feb 2013 17:46:00 +0200
 
 exnote (1.2.0) unstable; urgency=low
 

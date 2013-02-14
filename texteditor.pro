@@ -9,7 +9,7 @@ QT       += core gui
 TARGET = exnote
 TEMPLATE = app
 
-VERSION = 1.2.0
+VERSION = 1.2.1
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 SOURCES += main.cpp \
@@ -27,7 +27,9 @@ SOURCES += main.cpp \
     sharecommand.cpp \
     utils.cpp \
     MTextEditFilter/mtexteditfilter.cpp \
-    mbuckets.cpp
+    mbuckets.cpp \
+    meditor.cpp \
+    mtimestampwidget.cpp
 
 HEADERS  += \
     mainpage.h \
@@ -51,7 +53,9 @@ HEADERS  += \
     MTextEditFilter/WidgetAnimationIn.h \
     MTextEditFilter/mtexteditfilter.h \
     mbuckets_p.h \
-    mbuckets.h
+    mbuckets.h \
+    meditor.h \
+    mtimestampwidget.h
 
 FORMS    +=
 

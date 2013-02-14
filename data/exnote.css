@@ -333,3 +333,59 @@ MListIndexTooltip MLabelStyle {
     horizontal-alignment: left;
     vertical-alignment: vcenter;
 }
+
+/* MEditor widget style. */
+
+MRichTextEditStyle#CommonEditorNoteArea {
+    background-image: meegotouch-sheet-inputfield-background 15px 15px 15px 15px;
+    font: $FONT_FAMILY_LIGHT 26;
+    prompt-font: $FONT_FAMILY_LIGHT 26;
+    padding-top: 24;
+}
+
+MRichTextEditStyle#CommonEditorNoteArea:selected {
+    background-image: meegotouch-sheet-inputfield-background 15px 15px 15px 15px;
+}
+
+MRichTextEditStyle#CommonEditorNoteAreaInverted {
+    background-image: meegotouch-sheet-inputfield-inverted-background 15px 15px 15px 15px;
+    font: $FONT_FAMILY_LIGHT 26;
+    prompt-font: $FONT_FAMILY_LIGHT 26;
+    text-color: $COLOR_INVERTED_FOREGROUND;
+    padding-top: 24;
+}
+
+MRichTextEditStyle#CommonEditorNoteAreaInverted:selected {
+    background-image: meegotouch-sheet-inputfield-inverted-background 15px 15px 15px 15px;
+}
+
+#NoteWidgetStyle {
+    stripe-width: 0;
+    padding-right: 0; /* Update this as needed.. sigh. lack of math here sucks. This should be left+width+right. */
+    stripe-mask-image: ;
+    background-color: #FFFFFF;
+    background-draw: true;
+    show-actions: true;
+}
+
+/* Timestamp area widget. */
+
+#NoteEditTimeStampArea {
+    background-color: #FFFFFF;
+    minimum-size:      100% 4mm;
+    preferred-size:    100% 4mm;
+    maximum-size:      100% 4mm;
+    margin-top:        0;
+    margin-bottom:     0;
+    margin-left:       0;
+    margin-right:      0;
+}
+
+#NoteEditTimeStampLabel {
+    font: $FONT_FAMILY_LIGHT 18px;
+    color: #505050;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: $INDENT_DEFAULT;
+    margin-right: 0;
+}
