@@ -244,11 +244,11 @@ margin-right:      0;
 
 #CommonBasicListItemAccented:pressed {
     background-image:  color19-meegotouch-panel-background-selected $CORNER_MARGINS;
-    background-opacity: 0.1;
+    background-opacity: 0.2;
 }
 #CommonBasicListItemAccented:selected {
     background-image:  color19-meegotouch-panel-background-selected $CORNER_MARGINS;
-    background-opacity: 0.2;
+    background-opacity: 0.4;
 }
 
 #PopupListItem:pressed {
