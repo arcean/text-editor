@@ -137,7 +137,11 @@ void EditorPage::writeToFile()
 
     file.open(QIODevice::WriteOnly | QIODevice::Text);
     QTextStream out(&file);
-    out << editor->getTextEditor()->toHtml();
+    QString editorContent = editor->getTextEditor()->toHtml();
+    // Fixes charset encoding problems on web browsers.
+    editorContent.replace("<meta name=\"qrichtext\" content=\"1\" />", "<meta name=\"qrichtext\" http-equiv=\"Content-Type\" content=\"1;charset=utf-8\" >");
+
+    out << editorContent;
     file.close();
 
     if (oldFileName.length() > 0)
