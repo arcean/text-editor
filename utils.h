@@ -31,6 +31,7 @@ public:
     static QString getNewFilenameWithDate();
     static void getNewFilename(QString &text);
     static bool createDirIfNotExists();
+    static QString readDataToTxt(const QString& filePath);
     
 signals:
     

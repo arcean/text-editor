@@ -9,7 +9,7 @@ QT       += core gui
 TARGET = exnote
 TEMPLATE = app
 
-VERSION = 1.2.2
+VERSION = 1.2.2-tpreview
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 SOURCES += main.cpp \

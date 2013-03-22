@@ -66,6 +66,7 @@ private slots:
     void deleteAccepted();
     void showConfirmDeleteDialog();
     void showShareDialog();
+    void showShareTextDialog();
 
     // MTextEditFilter and MPannableWidget
     void listPannedUpFromTop();

@@ -56,3 +56,41 @@ void ShareCommand::share(const QString &filePath)
         qCritical() << "Invalid ShareUi";
 
 }
+
+void ShareCommand::shareAsText(const QString &text, const QString &title)
+{
+    MDataUri duri;
+
+    duri.setMimeType ("text/x-url");
+    duri.setTextData (text, "utf-8");
+
+   // if (!title.isEmpty())
+  //      duri.setAttribute ("title", title);
+
+    qDebug() << "T1" << text;
+    qDebug() << "T2" << duri.textData();
+
+    //duri.setAttribute ("description", desc);
+
+    if (!duri.isValid()) {
+        qCritical() << "Invalid URI";
+        return;
+    }
+
+    if (text.isEmpty()) {
+        qCritical() << "Empty sharing text...";
+        return;
+    }
+
+    QStringList items;
+    items << duri.toString();
+
+    ShareUiInterface shareIf("com.nokia.ShareUi");
+
+    if (shareIf.isValid())
+        shareIf.share (items);
+    else {
+        qCritical() << "Invalid interface";
+        return;
+    }
+}

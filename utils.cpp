@@ -229,3 +229,29 @@ void Utils::getNewFilename(QString &text)
 
     text = file.fileName();
 }
+
+QString Utils::readDataToTxt(const QString &filePath)
+{
+    QFile file (filePath);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "[E]: could not open the file" << filePath;
+        return "";
+    }
+
+    QTextStream in(&file);
+    QString line = in.readLine();
+
+    while (!in.atEnd()) {
+        line += in.readLine();
+    }
+
+    //// Parse the title
+    line.replace(QRegExp("<[^>]*/p>"), QString('\n'));
+    line.remove(QRegExp("<[^>]*>"));
+    line.remove("p, li { white-space: pre-wrap; }", Qt::CaseSensitive);
+
+    qDebug() << "Ret" << line;
+
+    return line;
+}

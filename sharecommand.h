@@ -24,6 +24,7 @@ public:
     explicit ShareCommand(QObject *parent = 0);
 
     void share(const QString &filePath);
+    void shareAsText(const QString &text, const QString &title);
     
 signals:
     

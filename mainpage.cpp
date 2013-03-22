@@ -169,9 +169,12 @@ void MainPage::createContent()
     /////////////////////////////////////////////////// OBJECT MENU
     objectMenu = new MObjectMenu(0);
 
-    MAction *shareNote = new MAction("Share", this);
-    shareNote->setLocation(MAction::ObjectMenuLocation);
-    objectMenu->addAction(shareNote);
+    MAction *shareNoteFile = new MAction("Share as a file", this);
+    shareNoteFile->setLocation(MAction::ObjectMenuLocation);
+    objectMenu->addAction(shareNoteFile);
+    MAction *shareNoteText = new MAction("Share as a text", this);
+    shareNoteText->setLocation(MAction::ObjectMenuLocation);
+    objectMenu->addAction(shareNoteText);
     MAction *removeNote = new MAction("Remove", this);
     removeNote->setLocation(MAction::ObjectMenuLocation);
     objectMenu->addAction(removeNote);
@@ -181,7 +184,8 @@ void MainPage::createContent()
     connect(list, SIGNAL(itemLongTapped(QModelIndex)), this, SLOT(showObjectMenu(QModelIndex)));
     connect(list, SIGNAL(itemClicked(QModelIndex)), this, SLOT(showEditor(QModelIndex)));
     connect(removeNote, SIGNAL(triggered()), this, SLOT(showConfirmDeleteDialog()));
-    connect(shareNote, SIGNAL(triggered()), this, SLOT(showShareDialog()));
+    connect(shareNoteFile, SIGNAL(triggered()), this, SLOT(showShareDialog()));
+    connect(shareNoteText, SIGNAL(triggered()), this, SLOT(showShareTextDialog()));
     connect(aboutDialog, SIGNAL(triggered()), this, SLOT(showAboutDialog()));
     connect(header, SIGNAL(clicked()), this, SLOT(showSortDialog()));
     connect(list->filtering(), SIGNAL(listPannedUpFromTop()), this, SLOT(listPannedUpFromTop()));
@@ -368,6 +372,24 @@ void MainPage::showShareDialog()
 
         ShareCommand shareCommand;
         shareCommand.share(filePath);
+
+        longTappedIndex = QModelIndex();
+    }
+}
+
+void MainPage::showShareTextDialog()
+{
+    if(longTappedIndex.isValid()) {
+        QVariant data = longTappedIndex.data(Qt::DisplayRole);
+        QStringList rowData = data.value<QStringList>();
+        QString title = rowData[0];
+        // rowData[2] == filePath
+        QString text = Utils::readDataToTxt(rowData[2]);
+        qDebug() << "ret2" << text;
+        qDebug() << "title" << title;
+
+        ShareCommand shareCommand;
+        shareCommand.shareAsText(text, title);
 
         longTappedIndex = QModelIndex();
     }
