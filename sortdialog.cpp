@@ -79,6 +79,11 @@ selectionModel->select(index, QItemSelectionModel::Select);
     connect(list, SIGNAL(itemClicked(QModelIndex)), this, SLOT(itemClicked(QModelIndex)));
 }
 
+SortDialog::~SortDialog()
+{
+    delete list;
+}
+
 void SortDialog::itemClicked(const QModelIndex &index)
 {
     if (index.row() == 0) {

@@ -32,7 +32,7 @@ MTimeStampWidget::MTimeStampWidget(QGraphicsItem *parent)
 
 MTimeStampWidget::~MTimeStampWidget()
 {
-
+    delete timeStampLabel;
 }
 
 void MTimeStampWidget::setAutoDateTime()

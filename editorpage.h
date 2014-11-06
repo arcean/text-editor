@@ -29,6 +29,7 @@ class EditorPage : public MSheet
     Q_OBJECT
 public:
     explicit EditorPage(bool focusOnEditor = false, QGraphicsItem *parent = 0);
+    ~EditorPage();
 
     void loadFile(const QString& filePath, int filePosition);
 

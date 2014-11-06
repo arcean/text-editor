@@ -36,6 +36,12 @@ public:
         linearLayout->addItem(titleWidget);
     }
 
+    ~ViewHeader()
+    {
+        delete linearLayout;
+        delete titleWidget;
+    }
+
     void setTitle(const QString &title)
     {
         titleWidget->setText(title);

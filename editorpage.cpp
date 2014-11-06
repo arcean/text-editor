@@ -65,6 +65,11 @@ EditorPage::EditorPage(bool focusOnEditor, QGraphicsItem *parent)
     saveAction->setDisabled(true);
 }
 
+EditorPage::~EditorPage()
+{
+    delete saveAction;
+}
+
 void EditorPage::setFocusOnEditor()
 {
     // Focus on the editor

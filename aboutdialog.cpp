@@ -25,7 +25,7 @@ AboutDialog::AboutDialog()
     const QChar CopyrightSymbol(0x00a9);
 
     QString text(qtTrId("Note taking application for MeeGo 1.2 Harmattan. HTML files are stored in MyDocs/exnote catalog.\n\n"));
-    QString copyright_string(QString(CopyrightSymbol) + QString::fromUtf8("2012, 2013 Tomasz Pieniążek"));
+    QString copyright_string(QString(CopyrightSymbol) + QString::fromUtf8(" 2012 - 2014 Tomasz Pieniążek"));
 
     MLabel *textSystemModal= new MLabel(text + copyright_string);
     textSystemModal->setStyleName("CommonBodyTextInverted");

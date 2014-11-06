@@ -48,6 +48,14 @@ Cell::Cell(MWidget *parent) :
     this->setStyleName("NotesPopupListItem");
 }
 
+Cell::~Cell()
+{
+    delete line1;
+    delete line2;
+    delete line3;
+    delete date;
+}
+
 void Cell::setLine1(const QString& text)
 {
     line1->setText(text);

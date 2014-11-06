@@ -23,6 +23,7 @@ class SortDialog : public MDialog
     Q_OBJECT
 public:
     explicit SortDialog(int sortMode, QGraphicsWidget *parent = 0);
+    ~SortDialog();
 
 private slots:
     void itemClicked(const QModelIndex &index);

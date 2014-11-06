@@ -25,6 +25,7 @@ class Cell : public MListItem
     Q_OBJECT
 public:
     explicit Cell(MWidget *parent = 0);
+    ~Cell();
 
     void updateCell(const QModelIndex& index, MWidget * cell) const;
 

@@ -9,7 +9,9 @@ QT       += core gui
 TARGET = exnote
 TEMPLATE = app
 
-VERSION = 1.2.2-tpreview
+QMAKE_CXXFLAGS_RELEASE = -Wall -Werror
+
+VERSION = 1.3.0-tpreview1
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 SOURCES += main.cpp \

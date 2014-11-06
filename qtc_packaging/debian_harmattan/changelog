@@ -1,3 +1,10 @@
+exnote (1.3.0) unstable; urgency=low
+
+  * New: Share as text.
+  * Many fixes.
+
+ -- Tomasz Pieniążek <t.pieniazek@gazeta.pl>  Wed, 05 Nov 2014 22:51:00 +0200
+
 exnote (1.2.2) unstable; urgency=low
 
   * Fixed: UTF-8 character encoding.

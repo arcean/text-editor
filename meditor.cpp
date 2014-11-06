@@ -34,7 +34,8 @@ MEditor::MEditor(QGraphicsItem *parent)
 
 MEditor::~MEditor()
 {
-
+    delete textEditor;
+    delete timeStamp;
 }
 
 MRichTextEdit* MEditor::getTextEditor()

@@ -47,6 +47,13 @@ public:
         linearLayout->setAlignment(selectorImage, Qt::AlignVCenter);
     }
 
+    ~ClickableViewHeader()
+    {
+        delete linearLayout;
+        delete titleWidget;
+        delete selectorImage;
+    }
+
     void setTitle(const QString &title)
     {
         titleWidget->setText(title);

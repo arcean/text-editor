@@ -169,10 +169,10 @@ void MainPage::createContent()
     /////////////////////////////////////////////////// OBJECT MENU
     objectMenu = new MObjectMenu(0);
 
-    MAction *shareNoteFile = new MAction("Share as a file", this);
+    MAction *shareNoteFile = new MAction("Share as file", this);
     shareNoteFile->setLocation(MAction::ObjectMenuLocation);
     objectMenu->addAction(shareNoteFile);
-    MAction *shareNoteText = new MAction("Share as a text", this);
+    MAction *shareNoteText = new MAction("Share as text", this);
     shareNoteText->setLocation(MAction::ObjectMenuLocation);
     objectMenu->addAction(shareNoteText);
     MAction *removeNote = new MAction("Remove", this);
