@@ -1,6 +1,6 @@
 /***************************************************************************
 **
-** Copyright (C) 2012, 2013 Tomasz Pieniążek
+** Copyright (C) 2012 - 2014 Tomasz Pieniążek
 ** All rights reserved.
 ** Contact: Tomasz Pieniążek <t.pieniazek@gazeta.pl>
 **
@@ -192,7 +192,7 @@ void MainPage::createContent()
     connect(editFilter, SIGNAL(widgetHidden()), this, SLOT(removeEditFilterWidget()));
     connect(list, SIGNAL(geometryChanged()), this, SLOT(decideNoNotesLabel()));
     connect(list, SIGNAL(panningStarted()), this, SLOT(listPanningStarted()));
-   // connect(list->filtering()->editor(), SIGNAL(textChanged()), this, SLOT(highlightFilteredText()));
+    connect(list->filtering()->editor(), SIGNAL(textChanged()), this, SLOT(highlightFilteredText()));
 
     /////////////////////////////////////////////////// OTHER
     // FIXME: implement banners.
@@ -202,8 +202,9 @@ void MainPage::createContent()
 
 void MainPage::highlightFilteredText()
 {
-    // FIXME:
-    //cellCreator->highlightByText(list->filtering()->editor()->text());
+    cellCreator->highlightByText(list->filtering()->editor()->text());
+    // The one below forces cells' update
+    model->changeModel();
 }
 
 void MainPage::listPanningStarted()
@@ -356,7 +357,12 @@ void MainPage::deleteAccepted()
 
 void MainPage::showConfirmDeleteDialog()
 {
-    ConfirmDeleteDialog *dialog = new ConfirmDeleteDialog();
+    // Get file name
+    QVariant data = longTappedIndex.data(Qt::DisplayRole);
+    QStringList rowData = data.value<QStringList>();
+    QString title = rowData[0];
+
+    ConfirmDeleteDialog *dialog = new ConfirmDeleteDialog(title);
 
     connect(dialog, SIGNAL(accepted()), this, SLOT(deleteAccepted()));
 

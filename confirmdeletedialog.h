@@ -22,11 +22,14 @@ class ConfirmDeleteDialog : public MMessageBox
 {
     Q_OBJECT
 public:
-    explicit ConfirmDeleteDialog();
+    explicit ConfirmDeleteDialog(const QString &fileName);
     
 signals:
     
 public slots:
+
+private:
+    QString m_fileName;
     
 };
 

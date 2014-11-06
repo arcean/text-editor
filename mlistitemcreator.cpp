@@ -12,6 +12,8 @@
 **
 ****************************************************************************/
 
+#include <QDebug>
+
 #include "mlistitemcreator.h"
 
 void MListItemCreator::updateCell(const QModelIndex& index, MWidget * cell) const
@@ -24,13 +26,17 @@ void MListItemCreator::updateCell(const QModelIndex& index, MWidget * cell) cons
     QStringList rowData = data.value<QStringList>();
     QString title = rowData[0];
 
-    if (!highlightText.isEmpty()) {
-        int matchingIndex = title.indexOf(highlightText, 0, Qt::CaseInsensitive);
-        if (matchingIndex != -1) {
-            title.insert(matchingIndex + highlightText.length(), "</font></u>");
-            title.insert(matchingIndex, "<u><font color=#EFAF11>");
-        }
 
+    if (!highlightText.isEmpty()) {
+        int matchingIndex = 0;
+        while (matchingIndex > -1) {
+            matchingIndex = title.indexOf(highlightText, matchingIndex, Qt::CaseInsensitive);
+            if (matchingIndex != -1) {
+                title.insert(matchingIndex + highlightText.length(), "</font></u>");
+                title.insert(matchingIndex, "<u><font color=#EFAF11>");
+                matchingIndex += highlightText.length() + 11 + 23;
+            }
+        }
     }
 
     contentItem->setTitle(title);
