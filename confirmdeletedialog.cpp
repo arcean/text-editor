@@ -34,7 +34,7 @@ ConfirmDeleteDialog::ConfirmDeleteDialog(const QString &fileName):
     if (fileName.size() > 50)
         setText(qtTrId("Are you sure that you want to delete this note ?"));
     else
-        setText(qtTrId("Are you sure that you want to delete \"" + m_fileName.toAscii() + "\" ?"));
+        setText(qtTrId("Are you sure that you want to delete \"" + m_fileName.toUtf8() + "\" ?"));
 
     QPixmap icon("/opt/exnote/data/dialog-question.png");
     setIconPixmap(icon);
