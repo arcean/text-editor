@@ -59,13 +59,14 @@ void ShareCommand::share(const QString &filePath)
 
 void ShareCommand::shareAsText(const QString &text, const QString &title)
 {
+    Q_UNUSED(title);
     MDataUri duri;
 
     duri.setMimeType ("text/x-url");
     duri.setTextData (text, "utf-8");
 
-    if (!title.isEmpty())
-        duri.setAttribute ("title", title);
+   /* if (!title.isEmpty())
+       duri.setAttribute ("title", title);*/
 
     if (!duri.isValid()) {
         qCritical() << "Invalid URI";
