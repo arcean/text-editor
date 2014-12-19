@@ -59,6 +59,11 @@ MainPage::~MainPage()
 {
     delete model;
     delete objectMenu;
+    delete layoutAnimation;
+    delete listAnimationIn;
+    delete listAnimationOut;
+    delete proxyModel;
+    delete editFilter;
 }
 
 void MainPage::createContent()

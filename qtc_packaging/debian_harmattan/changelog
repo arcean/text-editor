@@ -1,9 +1,11 @@
 exnote (1.3.0) unstable; urgency=low
 
-  * New: Share as text.
+  * New: Share note as text.
+  * New: Improved filtering functionality.
+  * New: Show note's title in delete confirmation dialog.
   * Many fixes.
 
- -- Tomasz Pieniążek <t.pieniazek@gazeta.pl>  Wed, 05 Nov 2014 22:51:00 +0200
+ -- Tomasz Pieniążek <t.pieniazek@gazeta.pl>  Thu, 06 Nov 2014 17:51:35 +0200
 
 exnote (1.2.2) unstable; urgency=low
 
