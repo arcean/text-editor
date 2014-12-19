@@ -1,3 +1,10 @@
+exnote (1.3.1) unstable; urgency=low
+
+  * Fixes: incorrect char encoding in remove dialog.
+  * Fixes: doubled text content when shared as text..
+
+ -- Tomasz Pieniążek <t.pieniazek@gazeta.pl>  Fri, 19 Dec 2014 12:17:11 +0200
+
 exnote (1.3.0) unstable; urgency=low
 
   * New: Share note as text.

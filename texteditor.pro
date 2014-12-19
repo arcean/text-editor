@@ -11,7 +11,7 @@ TEMPLATE = app
 
 QMAKE_CXXFLAGS_RELEASE = -Wall -Werror
 
-VERSION = 1.3.0
+VERSION = 1.3.1
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 SOURCES += main.cpp \
